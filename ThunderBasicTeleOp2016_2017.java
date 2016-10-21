@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -42,15 +42,18 @@ public class ThunderBasicTeleOp2016_2017 extends OpMode {
         motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor3.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
     }
 
     @Override
-    public void loop() {                                                                                                     //constant loop that rechecks about every 20ms
-        double GearRatio = 0.25;                                                                                             //We geared up from 80 teeth to 40 teeth: this is needed so that we don't go too fast)
-        double leftpower = Math.pow(gamepad1.left_stick_y * GearRatio * -1, 3/*The power the value before is raised */);     //set's a value for power equal to the opposite of the value of the joysticks for the left
-        double rightpower = Math.pow(gamepad1.right_stick_y * GearRatio, 3);                                                 //set's a value for power equal to the value of the joysticks for the right
+    public void loop() {                                          //constant loop that rechecks about every 20ms
+        double GearRatio = 0.25;                                  //We geared up from 80 teeth to 40 teeth: this is needed so that we don't go too fast)
+        double leftpower = gamepad1.left_stick_y * GearRatio;     //set's a value for power equal to the opposite of the value of the joysticks for the left
+        double rightpower =gamepad1.right_stick_y * GearRatio;    //set's a value for power equal to the value of the joysticks for the right
 
         leftpower = Range.clip(leftpower, -1, 1);        //gamepad controllers have a value of 1 when you push it to its maximum foward
         rightpower = Range.clip(rightpower, -1, 1);      //range of power, min first then max
