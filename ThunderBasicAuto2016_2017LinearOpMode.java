@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  * Created by citruseel on 10/26/2016.
- */
+ * Last modified on 10/26/2016 by Curtis + Lake
+ * Version 0.1
+ **/
 @TeleOp(name="Basic Linear Autonomous", group="Autonomous")
 
 public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
@@ -51,9 +53,10 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
         waitForStart();
 
-        MoveForward(0.5, 2000/*milliseconds*/);
+        MoveForward(0.5, 2000 /*milliseconds*/); //Subject to change as we figure out a good standard speed
     }
-
+    
+    //Moves the robot forward based on the power given and the amount of time we want it to go
     public void MoveForward(double power, long time)throws InterruptedException{
         motor1.setPower(power);
         motor2.setPower(power);
