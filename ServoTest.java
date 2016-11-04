@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -14,12 +15,13 @@ import com.qualcomm.robotcore.util.Range;
 
 public class ServoTest extends OpMode {
 
+    private ServoController servoController;
     private Servo testing;
     private double servoposition = 0;//start position
 
     @Override
     public void init() {
-
+        servoController = hardwareMap.servoController.get("SCP2"); //hardwaremapping the servo controller
         testing = hardwareMap.servo.get("servo"); //hardwaremapping the servo
     }
 
@@ -39,5 +41,4 @@ public class ServoTest extends OpMode {
         telemetry.addData("ServoTest", "Servo Postition " + servoposition); //shows data after comma in phone
 
     }
-
 }
