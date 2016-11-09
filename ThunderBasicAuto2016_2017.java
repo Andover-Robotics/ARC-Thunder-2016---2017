@@ -18,6 +18,7 @@ package org.firstinspires.ftc.teamcode;
  *
  *
  * */
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,7 +28,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 //package org.firstinspires.ftc.robotcontroller.external.samples;
 
 
-@TeleOp(name="Basic Autonomous", group="Autonomous")
+@Autonomous(name="Basic Autonomous", group="Autonomous")
 /**The line above demonstrates the new way to register opmodes inside the code. This method cannot
  * be used in FTC apps prior to version 2. (Update your phones to have matching version numbers
  * and version 2 of the FTC apps.)
