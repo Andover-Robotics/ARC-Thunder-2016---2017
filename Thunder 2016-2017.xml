@@ -4,6 +4,13 @@
         <Motor name="motorFrontR" port="1" />
         <Motor name="motorFrontL" port="2" />
     </MotorController>
+    <ServoController name="SCP2" serialNumber="AI049L84">
+        <Servo name="servo" port="1" />
+    </ServoController>
+    <DeviceInterfaceModule name="DIM" serialNumber="AI02RHKL">
+        <ColorSensor name="Beacon Color Sensor" port="0" />
+        <ColorSensor name="Color sensor" port="5" />
+    </DeviceInterfaceModule>
     <MotorController name="MCP0" serialNumber="A104OQ68">
         <Motor name="motorBack1" port="1" />
         <Motor name="motorBack2" port="2" />
