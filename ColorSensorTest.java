@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cController;
 
 /**
@@ -26,6 +27,9 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
     ColorSensor colorSensor; //stated colorsensor
     ColorSensor beaconSensor;
 
+    public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address for some reason
+    public static final I2cAddr COLOR_SENSOR_CHANGED_ADDRESS = I2cAddr.create8bit(0x3a);
+
     public void runOpMode(){
 
         float hsvValues[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
@@ -35,9 +39,9 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
 
         interfaceModule = hardwareMap.deviceInterfaceModule.get("DIM"); //hardware map the device interface module which controls the color sensor
         colorSensor = hardwareMap.colorSensor.get("Color sensor"); //hardware map the color sensor
-        colorSensor.setI2cAddress(0x3c); //we made it so this one has to be this address, need seperate program to change this
+        colorSensor.setI2cAddress(COLOR_SENSOR_ORIGINAL_ADDRESS); //we made it so this one has to be this address, need seperate program to change this
         beaconSensor = hardwareMap.colorSensor.get("Beacon Color sensor");
-        beaconSensor.setI2cAddress(0x3a); //we made it so this one has to be this address
+        beaconSensor.setI2cAddress(COLOR_SENSOR_CHANGED_ADDRESS); //we made it so this one has to be this address
 
 
         waitForStart();
