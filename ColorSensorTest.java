@@ -33,9 +33,8 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
     public void runOpMode(){
 
         float hsvValues[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
+        float hsvValues2[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
 
-        // values is a reference to the hsvValues array. Mainly for the background color changing
-        final float values[] = hsvValues;
 
         interfaceModule = hardwareMap.deviceInterfaceModule.get("DIM"); //hardware map the device interface module which controls the color sensor
         colorSensor = hardwareMap.colorSensor.get("Color sensor"); //hardware map the color sensor
@@ -47,16 +46,22 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
         waitForStart();
 
         colorSensor.enableLed(true);
+        beaconSensor.enableLed(true);
 
         while(opModeIsActive()){
 
-            //Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
+            Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
+            Color.RGBToHSV(beaconSensor.red(), beaconSensor.green(), beaconSensor.blue(), hsvValues2); //converts the integer values recieved from each color and converts it to the array values
 
             //hopefully shows on phone what colors are being shown
             telemetry.addData("Red  ", colorSensor.red());
             telemetry.addData("Green", colorSensor.green());
             telemetry.addData("Blue ", colorSensor.blue());
             telemetry.addData("Hue", hsvValues[0]);
+
+            telemetry.addData("Beacon Red  ", beaconSensor.red());
+            telemetry.addData("Beacon Blue ", beaconSensor.blue());
+            telemetry.addData("Beacon Hue", hsvValues2[0]);
 
             telemetry.update();
 
