@@ -24,6 +24,7 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
     private DeviceInterfaceModule interfaceModule; //stated interface module
 
     ColorSensor colorSensor; //stated colorsensor
+    ColorSensor beaconSensor;
 
     public void runOpMode(){
 
@@ -34,6 +35,9 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
 
         interfaceModule = hardwareMap.deviceInterfaceModule.get("DIM"); //hardware map the device interface module which controls the color sensor
         colorSensor = hardwareMap.colorSensor.get("Color sensor"); //hardware map the color sensor
+        colorSensor.setI2cAddress(0x3c); //we made it so this one has to be this address, need seperate program to change this
+        beaconSensor = hardwareMap.colorSensor.get("Beacon Color sensor");
+        beaconSensor.setI2cAddress(0x3a); //we made it so this one has to be this address
 
 
         waitForStart();
