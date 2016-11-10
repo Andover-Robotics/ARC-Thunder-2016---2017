@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.I2cController;
 
 /**
- * Created by citruseel on 11/2/2016.
+ * Created by citruseel on 11/2/2016. Note, currently this code only works with one color sensor plugged in
  */
 
 @Autonomous(name="ColorSensorTest", group="Autonomous")
@@ -35,18 +35,14 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
         interfaceModule = hardwareMap.deviceInterfaceModule.get("DIM"); //hardware map the device interface module which controls the color sensor
         colorSensor = hardwareMap.colorSensor.get("Color sensor"); //hardware map the color sensor
 
-        colorSensor.enableLed(true);
-
 
         waitForStart();
-        
+
         colorSensor.enableLed(true);
 
         while(opModeIsActive()){
 
-            colorSensor.enableLed(true);
-            
-            Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
+            //Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
 
             //hopefully shows on phone what colors are being shown
             telemetry.addData("Red  ", colorSensor.red());
