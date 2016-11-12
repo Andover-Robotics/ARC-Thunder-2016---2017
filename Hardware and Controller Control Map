@@ -4,6 +4,12 @@ HARDWARE MAP
   Motor Controllers:
     - MCP0 = Motor controller plugged into port 0 of the core power module
     - MCP1 = Motor controller plugged into port 1 of the core power module
+    - [unnamed] = Motor controller plugged into port 4 of the core power module
+  Servo Controllers:
+    - SCP2 = Servo controller plugged into port 2 of the core power module
+  Device Interface Module (DIM):
+    - DIM = Device interface module plugged into port 3 of the core power module
+  
   
   Motors: 
     - motorFrontR = Motor plugged into motor slot 1 of motor controller 1, front right wheel motor
@@ -12,7 +18,10 @@ HARDWARE MAP
     - motorBack2 = Motor plugged into motor slot 2 of motor controller 0, back right wheel motor
     
   Servos:
-    - 
+    - servo = Servo plugged into slot 1 of the servo controller (SCP2), servo that controls the
+              beacon pressing mechanism on the back of the robot
+              
+  
 
 CONTROL MAP
   Controller 1 (Driver 1):
