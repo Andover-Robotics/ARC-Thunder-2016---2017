@@ -17,7 +17,7 @@ HARDWARE MAP
     - motorBack1 = Motor plugged into motor slot 1 of motor controller 0, back left wheel motor
     - motorBack2 = Motor plugged into motor slot 2 of motor controller 0, back right wheel motor
     - motorSweeper = Motor that drives the sweeper mechanism, motor slot 1 of motor controller port 4
-    - motorLaunching = Motor that moves the current launching mechanism, motor slot 2 of motor controller port 4
+    - motorLauncher = Motor that moves the current launching mechanism, motor slot 2 of motor controller port 4
     
   Servos:
     - servo = Servo plugged into slot 1 of the servo controller (SCP2), servo that controls the
@@ -31,4 +31,5 @@ CONTROL MAP
     - Right Joystick = controls the right side wheel speed.
     
   Controller 2 (Driver 2):
-    - 
+    - Left Trigger = controls the sweeper
+    - Right Trigger = controls the launcher
