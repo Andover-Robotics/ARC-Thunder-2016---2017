@@ -35,6 +35,22 @@ public class ServoTest extends OpMode {
         if(gamepad2.left_stick_x < 0) {
             servoposition = servoposition - 0.008;
         }
+        
+        /**
+        *   Resetting Servo Code
+        *     - Servo will go back to the middle if neither button is pressed
+        *
+        if(gamepad2.x == true && gamepad2.b == false) {
+            servoposition = 0.05;
+        }
+        if(gamepad2.b == true && gamepad2.x == false) {
+            servoposition = 0.95;
+        }
+        if (gamepad2.b == false && gamepad2.x == false) {
+            servoposition = 0.5;
+        }
+        
+        */
 
         testing.setPosition(servoposition); //constantly updates the servo's position every 20ms
 
