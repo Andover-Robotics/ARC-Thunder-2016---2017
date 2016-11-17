@@ -22,12 +22,8 @@ import java.sql.Time;
 //Place robot backwards at atonomous because the beacon pressers are on the back, so we make the driving as if the robot was backwards
 
 public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
-    /* Note:
-     * When you extend OpMode, you must declare the methods init() and loop()
-     */
 
-        /** Declaring electronics
-         * This can be done with a separate class and can make creating code much easier / simpler. */
+        /** Declaring electronics**/
         private DcMotorController motorControllerP0;    // Motor Controller in port 0 of Core
         private DcMotorController motorControllerP1;    // Motor Controller in port 1 of Core
 
@@ -39,13 +35,12 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
         private DeviceInterfaceModule interfaceModule; //stated interface module
 
         ColorSensor colorSensor; //stated colorsensor
-        ColorSensor beaconSensor;
+        ColorSensor beaconSensor; //state beacon color sensor
 
-        //Each color sensor has it's own I2cAddress, they need to have unique addresses so the systeme doesn't get confused.
-        public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address for some reason
+        //Each color sensor has it's own I2cAddress; they need to have unique addresses so the system doesn't get confused.
+        public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address
         public static final I2cAddr COLOR_SENSOR_CHANGED_ADDRESS = I2cAddr.create8bit(0x3a);
 
-    /* Declaring variables */
 
     public void runOpMode() throws InterruptedException{
         /** Initializing and mapping electronics (motors, motor controllers, servos, etc.) */
@@ -76,50 +71,68 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
         beaconSensor = hardwareMap.colorSensor.get("Beacon Color sensor");
         beaconSensor.setI2cAddress(COLOR_SENSOR_CHANGED_ADDRESS); //we made it so this one has to be this address
 
-        float hsvValues[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
-        float hsvValues2[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
-
-
+        //color sensor intial states
         colorSensor.enableLed(true);
         beaconSensor.enableLed(true);
 
+        //variables for getting the color
+        float hsvValues[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
+        float hsvValues2[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
+
         //variables for going to the tape and rotating
         boolean seenTape = false;
-        long lastTime = System.currentTimeMillis(); //I believe gets time in milliseconds
-        long time = System.currentTimeMillis();
-        long changeInTime = (time - lastTime);
-        double tapeLengthTraveled = 0; //for now until it is changed later in the autonomous
+        boolean alignedToTape = false;
+        long lastTime = System.currentTimeMillis(); //I believe gets time in milliseconds for when the robot enters the tape
+        long time = System.currentTimeMillis(); //gets the time for when the robot leaves the tape
+        long changeInTime = (lastTime-time); //gets the amount of time it took for the robot to travel across the tape
+        double tapeLengthTraveled = 0; //temporary until it is changed later in the autonomous
         double tapeWidth = 2; //in inches; actual tape measurements found on http://www.andymark.com/FTC17-p/am-3160.htm
         double speed = 15.5; //robot's speed at 0.5 power in inches/seconds
+        double turningAngle = Math.asin(tapeWidth/tapeLengthTraveled); //finds angle to turn(Note: I believe asin.(number) = inverse sine)
+        long turningAngleLong = (long) turningAngle;//turn the turning angle into a long so that it can be used in the time
+        long rotateSpeed = 0; //robot's rotational degrees per second every 0.5 power; needs to be long so it can be used in the calculation for time
 
 
-        waitForStart();
+        waitForStart(); //all code below is what the robot actually does
 
         while(opModeIsActive()){
 
             Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
             Color.RGBToHSV(beaconSensor.red(), beaconSensor.green(), beaconSensor.blue(), hsvValues2); //converts the integer values recieved from each color and converts it to the array values
 
+
+
+        // What the robot will do to get to the Beacons and align to them
             //What happens until robot sees the tape
-            if (colorSensor.argb() == 0xFFFFFFFF){ //I believe that .argb() is the hue.
-               seenTape = true;
+            if (colorSensor.argb() == 0xFFFFFFFF && seenTape == false){ //I believe that .argb() is the hue.
+               seenTape = true; //initiates other stuff
             }
             else{
-                MoveForward(0.5);
+                MoveForward(0.5); //go until see white tape
             }
 
             //What happens when the robot sees the tape
             if (colorSensor.argb() == 0xFFFFFFFF && seenTape == true){
-                lastTime = System.currentTimeMillis();
-                MoveForward(0.5);
+                lastTime = System.currentTimeMillis(); //get the current time now when the robot enters the tape
+                MoveForward(0.5); //move foward
             }
+
             if (colorSensor.argb() != 0xFFFFFFFF && seenTape == true){
+                //update all variables
                 time = System.currentTimeMillis();
-                changeInTime = (time - lastTime) / 1000;//time taken to go across the tape in seconds
-                tapeLengthTraveled = changeInTime * speed; //since we know the speed and the time, we can find the distance in inches
-                double turningAngle = Math.sin(tapeWidth/tapeLengthTraveled); //finds angle to turn by
+                changeInTime = (lastTime - time) / 1000;
+                tapeLengthTraveled = changeInTime * speed;
+                turningAngle = Math.asin(tapeWidth/tapeLengthTraveled);
+                turningAngleLong = (long) turningAngle;
+
                 BackUp(0.5, changeInTime/2); //I believe this will make it so the robot moves to the center of the white tape
-                rotateLeft(0.5, 10000000);
+                rotateLeft(0.5, turningAngleLong/rotateSpeed);
+                alignedToTape = true; //initiates poker stuff
+            }
+
+
+        //poker stuff begins here
+            if (alignedToTape == true){
 
             }
 
