@@ -27,6 +27,7 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
     ColorSensor colorSensor; //stated colorsensor
     ColorSensor beaconSensor;
 
+    //Each color sensor has it's own I2cAddress, they need to have unique addresses so the systeme doesn't get confused.
     public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address for some reason
     public static final I2cAddr COLOR_SENSOR_CHANGED_ADDRESS = I2cAddr.create8bit(0x3a);
 
@@ -52,6 +53,11 @@ public class ColorSensorTest extends LinearOpMode{ //apparetnly LinearOpMode doe
 
             Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
             Color.RGBToHSV(beaconSensor.red(), beaconSensor.green(), beaconSensor.blue(), hsvValues2); //converts the integer values recieved from each color and converts it to the array values
+
+            //this small code down here verifies that this is an "if colorsensor sees white" statement
+            if(colorSensor.argb() == 0xFFFFFFFF){
+                telemetry.addData("Seen White: ", true);
+            }
 
             //hopefully shows on phone what colors are being shown
             telemetry.addData("Red  ", colorSensor.red());
