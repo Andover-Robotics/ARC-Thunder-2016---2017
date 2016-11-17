@@ -1,5 +1,5 @@
 # ARC Thunder 2016-2017 Season
-The repository containing code for ARC Thunder's 2016 season, primarily on the FTC game Velocity Vortex.
+The repository containing code for ARC Thunder's 2016 season, primarily on the FTC challenge Velocity Vortex.
 
 Whenever creating or editing code for the robot, please use the .xml file in this repository for robot configuration settings.
 
