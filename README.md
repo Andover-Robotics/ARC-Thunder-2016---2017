@@ -20,5 +20,6 @@ Remember, only one person edits or changes code at one time. Also, update code o
 [FTC - Java Programming] (http://paws.kettering.edu/~webe3546/FTCJavaProgramming.pdf)
   - This gives a basic rundown of how to use Android Studio in coding for the robot.
   - This presentation is made for to last year's FTC app (2015-2016), so some of the code might be outdated. 
-
-
+  
+## Robot Statistics (Last updated 11/16/2016)
+  - At 0.5 power, the robot travels 31 inches in 2 seconds (15.5 in/s, about 0.9 mph)
