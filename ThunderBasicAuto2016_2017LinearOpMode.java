@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -12,34 +13,33 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 
-import java.sql.Time;
 
 /**
  * Created by citruseel on 10/26/2016.
  */
 @Autonomous(name="Basic Linear Autonomous", group="Autonomous")
-
+//@Disabled
 //Place robot backwards at atonomous because the beacon pressers are on the back, so we make the driving as if the robot was backwards
 
 public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
-        /** Declaring electronics**/
-        private DcMotorController motorControllerP0;    // Motor Controller in port 0 of Core
-        private DcMotorController motorControllerP1;    // Motor Controller in port 1 of Core
+    /** Declaring electronics**/
+    private DcMotorController motorControllerP0;    // Motor Controller in port 0 of Core
+    private DcMotorController motorControllerP1;    // Motor Controller in port 1 of Core
 
-        private DcMotor motor1;                         // Motor 1: port 1 in Motor Controller 1
-        private DcMotor motor2;                         // Motor 2: port 2 in Motor Controller 1
-        private DcMotor motor3;                         // Motor 3: port 1 in Motor Controller 0
-        private DcMotor motor4;                         // Motor 4: port 2 in Motor Controller 0
+    private DcMotor motor1;                         // Motor 1: port 1 in Motor Controller 1
+    private DcMotor motor2;                         // Motor 2: port 2 in Motor Controller 1
+    private DcMotor motor3;                         // Motor 3: port 1 in Motor Controller 0
+    private DcMotor motor4;                         // Motor 4: port 2 in Motor Controller 0
 
-        private DeviceInterfaceModule interfaceModule; //stated interface module
+    private DeviceInterfaceModule interfaceModule; //stated interface module
 
-        ColorSensor colorSensor; //stated colorsensor
-        ColorSensor beaconSensor; //state beacon color sensor
+    ColorSensor colorSensor; //stated colorsensor
+    ColorSensor beaconSensor; //state beacon color sensor
 
-        //Each color sensor has it's own I2cAddress; they need to have unique addresses so the system doesn't get confused.
-        public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address
-        public static final I2cAddr COLOR_SENSOR_CHANGED_ADDRESS = I2cAddr.create8bit(0x3a);
+    //Each color sensor has it's own I2cAddress; they need to have unique addresses so the system doesn't get confused.
+    public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address
+    public static final I2cAddr COLOR_SENSOR_CHANGED_ADDRESS = I2cAddr.create8bit(0x3a);
 
 
     public void runOpMode() throws InterruptedException{
@@ -83,14 +83,14 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
         boolean seenTape = false;
         boolean alignedToTape = false;
         long lastTime = System.currentTimeMillis(); //I believe gets time in milliseconds for when the robot enters the tape
-        long time = System.currentTimeMillis(); //gets the time for when the robot leaves the tape
-        long changeInTime = (lastTime-time); //gets the amount of time it took for the robot to travel across the tape
+        long newTime = System.currentTimeMillis(); //gets the time for when the robot leaves the tape
+        long changeInTime = (lastTime-newTime); //gets the amount of time it took for the robot to travel across the tape
         double tapeLengthTraveled = 0; //temporary until it is changed later in the autonomous
         double tapeWidth = 2; //in inches; actual tape measurements found on http://www.andymark.com/FTC17-p/am-3160.htm
         double speed = 15.5; //robot's speed at 0.5 power in inches/seconds
         double turningAngle = Math.asin(tapeWidth/tapeLengthTraveled); //finds angle to turn(Note: I believe asin.(number) = inverse sine)
         long turningAngleLong = (long) turningAngle;//turn the turning angle into a long so that it can be used in the time
-        long rotateSpeed = 0; //robot's rotational degrees per second every 0.5 power; needs to be long so it can be used in the calculation for time
+        long rotateSpeed = 162; //robot's rotational degrees per second every 0.5 power; needs to be long so it can be used in the calculation for time
 
 
         waitForStart(); //all code below is what the robot actually does
@@ -102,25 +102,30 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
 
 
-        // What the robot will do to get to the Beacons and align to them
+            // What the robot will do to get to the Beacons and align to them
+
             //What happens until robot sees the tape
-            if (colorSensor.argb() == 0xFFFFFFFF && seenTape == false){ //I believe that .argb() is the hue.
-               seenTape = true; //initiates other stuff
-            }
-            else{
+            if((colorSensor.argb() != 0xFFFFFFFF)){
                 MoveForward(0.5); //go until see white tape
             }
 
-            //What happens when the robot sees the tape
-            if (colorSensor.argb() == 0xFFFFFFFF && seenTape == true){
-                lastTime = System.currentTimeMillis(); //get the current time now when the robot enters the tape
-                MoveForward(0.5); //move foward
+            else if ((colorSensor.argb() == 0xFFFFFFFF)){ //I believe that .argb() is the hue.
+                seenTape = true; //initiates other stuff
             }
 
-            if (colorSensor.argb() != 0xFFFFFFFF && seenTape == true){
+            //What happens when the robot sees the tape
+            if ((colorSensor.argb() == 0xFFFFFFFF) && (seenTape)){
+                lastTime = System.currentTimeMillis(); //get the current time now when the robot enters the tape
+
+                while(((colorSensor.argb() == 0xFFFFFFFF) && (seenTape))) {
+                    MoveForward(0.5); //move foward
+                }
+            }
+
+            if ((colorSensor.argb() != 0xFFFFFFFF) && (seenTape)){
                 //update all variables
                 time = System.currentTimeMillis();
-                changeInTime = (lastTime - time) / 1000;
+                changeInTime = (lastTime - newTime) / 1000;
                 tapeLengthTraveled = changeInTime * speed;
                 turningAngle = Math.asin(tapeWidth/tapeLengthTraveled);
                 turningAngleLong = (long) turningAngle;
@@ -131,11 +136,10 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
             }
 
 
-        //poker stuff begins here
+            //poker stuff begins here
             if (alignedToTape == true){
 
             }
-
 
 
             //hopefully shows on phone what colors are being shown
@@ -145,10 +149,7 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
             telemetry.update();
 
-
         }
-
-
     }
 
     public void MoveForward(double power){
