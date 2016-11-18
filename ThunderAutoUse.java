@@ -56,7 +56,7 @@ public class AutonomousMovementTest extends LinearOpMode {
 
         waitForStart();
 
-        MoveForward(0.5, 3000/*milliseconds*/);
+        MoveForward(0.5, 4400/*milliseconds*/);
     }
 
     public void MoveForward(double power, long time)throws InterruptedException{
