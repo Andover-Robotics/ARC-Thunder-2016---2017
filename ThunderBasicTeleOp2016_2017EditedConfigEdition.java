@@ -100,14 +100,14 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         servoposition=Range.clip(servoposition, 0, 1);//range of servo values is between 0 and 1
 
-        if(gamepad2.x == true && gamepad2.b == false) {
+        if(gamepad2.x && !gamepad2.b) {                 //if(gamepad2.x) is the same as if(gamepad2.x == true)
             servoposition = 0.05;
         }
-        if (gamepad2.x == false) {
-            if (gamepad2.b == true) {
+        if (!gamepad2.x) {
+            if (gamepad2.b) {
                 servoposition = 0.95;
             }
-            if (gamepad2.b == false) {
+            if (!gamepad2.b) {                          //if(!gamepad2.b) is the same as if(gamepad2.b == false)
                 servoposition = 0.5;
             }
         }
