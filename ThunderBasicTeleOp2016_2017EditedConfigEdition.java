@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.Range;
  * Created by citruseel on 10/14/2016.
  */
 
-@TeleOp(name="Config Special TeleOp", group="TeleOp")
+@TeleOp(name="Thunder 2016-2016 TeleOp New Config", group="TeleOp")
 
 public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
