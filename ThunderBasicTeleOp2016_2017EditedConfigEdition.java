@@ -43,10 +43,10 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         motorControllerP4 = hardwareMap.dcMotorController.get("MCP4");
 
 
-        motor1 = hardwareMap.dcMotor.get("motor1");        //MCP4
-        motor2 = hardwareMap.dcMotor.get("motor2");        //MCP4
-        motor3 = hardwareMap.dcMotor.get("motor3");         //MCP1          Back of motor 1
-        motor4 = hardwareMap.dcMotor.get("motor4");         //MCP1          Back of motor 2
+        motor1 = hardwareMap.dcMotor.get("motorFrontL");        //MCP4
+        motor2 = hardwareMap.dcMotor.get("motorFrontR");        //MCP4
+        motor3 = hardwareMap.dcMotor.get("motorBackL");         //MCP1          Back of motor 1
+        motor4 = hardwareMap.dcMotor.get("motorBackR");         //MCP1          Back of motor 2
 
         launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //hardwaremapping the motor for the launcher MCP4 motor 1
         sweeperMotor = hardwareMap.dcMotor.get("motorSweeper"); //hardwaremapping the motor for the sweeper MCP4 motor 2
@@ -60,8 +60,8 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         launcherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        motor4.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor3.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         servoController = hardwareMap.servoController.get("SCP2"); //hardwaremapping the servo controller
@@ -95,7 +95,7 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         motor4.setPower(rightpower);
 
         sweeperMotor.setPower(sweeperPower);
-        launcherMotor.setPower(launcherPower);
+        launcherMotor.setPower(-1 * launcherPower);     //We multiplied by -1 to make the balls launch from the top instead of the bottom (the launcher spins in the correct direction)
 
 
         servoposition=Range.clip(servoposition, 0, 1);//range of servo values is between 0 and 1
