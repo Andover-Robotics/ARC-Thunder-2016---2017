@@ -95,7 +95,7 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         motor4.setPower(rightpower);
 
         sweeperMotor.setPower(sweeperPower);
-        launcherMotor.setPower(-1 * launcherPower);     //We multiplied by -1 to make the balls launch from the top instead of the bottom (the launcher spins in the correct direction)
+        launcherMotor.setPower(launcherPower);
 
 
         servoposition=Range.clip(servoposition, 0, 1);//range of servo values is between 0 and 1
