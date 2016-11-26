@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <MotorController name="MCP0" serialNumber="A104OQP1">
+        <Motor name="motorSweeper" port="1" />
+        <Motor name="motorLauncher" port="2" />
+    </MotorController>
+    <MotorController name="MCP1" serialNumber="AI049QD1">
+        <Motor name="motorBackR" port="1" />
+        <Motor name="motorBackL" port="2" />
+    </MotorController>
+    <ServoController name="SCP2" serialNumber="AI049L84">
+        <Servo name="servo" port="1" />
+    </ServoController>
+    <DeviceInterfaceModule name="DIM" serialNumber="AI02RHKL">
+        <ColorSensor name="Color sensor" port="0" />
+        <ColorSensor name="Beacon Color Sensor" port="5" />
+    </DeviceInterfaceModule>
+    <MotorController name="MCP4" serialNumber="A104OQ68">
+        <Motor name="motorFrontL" port="1" />
+        <Motor name="motorFrontR" port="2" />
+    </MotorController>
+</Robot>
