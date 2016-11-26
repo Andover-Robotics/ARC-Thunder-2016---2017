@@ -21,12 +21,12 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
     private DcMotorController motorControllerP1;    // Motor Controller in port 1 of Core
     private DcMotorController motorControllerP4;    // Motor Controller in port 4 of Core
 
-    private DcMotor motor1;                         // Motor 1: port 1 in Motor Controller 1
-    private DcMotor motor2;                         // Motor 2: port 2 in Motor Controller 1
-    private DcMotor motor3;                         // Motor 3: port 1 in Motor Controller 0
-    private DcMotor motor4;                         // Motor 4: port 2 in Motor Controller 0
-    private DcMotor sweeperMotor;                   // Sweeper motor: port 1 in Motor Controller 4
-    private DcMotor launcherMotor;                  // Launcher motor: port 2 in Motor Controller 4
+    private DcMotor motor1;                         // Motor 1: port 1 in Motor Controller 4
+    private DcMotor motor2;                         // Motor 2: port 2 in Motor Controller 4
+    private DcMotor motor3;                         // Motor 3: port 1 in Motor Controller 1
+    private DcMotor motor4;                         // Motor 4: port 2 in Motor Controller 1
+    private DcMotor sweeperMotor;                   // Sweeper motor: port 1 in Motor Controller 0
+    private DcMotor launcherMotor;                  // Launcher motor: port 2 in Motor Controller 0
 
     private ServoController servoController;
 
@@ -48,8 +48,8 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         motor3 = hardwareMap.dcMotor.get("motorBackL");         //MCP1          Back of motor 1
         motor4 = hardwareMap.dcMotor.get("motorBackR");         //MCP1          Back of motor 2
 
-        launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //hardwaremapping the motor for the launcher MCP4 motor 1
-        sweeperMotor = hardwareMap.dcMotor.get("motorSweeper"); //hardwaremapping the motor for the sweeper MCP4 motor 2
+        launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //hardwaremapping the motor for the launcher MCP0 motor 1
+        sweeperMotor = hardwareMap.dcMotor.get("motorSweeper"); //hardwaremapping the motor for the sweeper MCP0 motor 2
 
         /*Setting channel modes*/
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
