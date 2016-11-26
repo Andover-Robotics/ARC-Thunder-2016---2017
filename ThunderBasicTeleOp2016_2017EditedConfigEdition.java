@@ -62,7 +62,7 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor3.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcherMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //launcherMotor.setDirection(DcMotorSimple.Direction.REVERSE);                  We did this so that when the joystick is pushed up, the ball will launch upwards; when the joystick is pushed down, the ball will launch downwards
 
         servoController = hardwareMap.servoController.get("SCP2"); //hardwaremapping the servo controller
 
