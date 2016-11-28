@@ -12,26 +12,34 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 
 
 /**
  * Created by citruseel on 10/26/2016.
  */
 @Autonomous(name="Basic Linear Autonomous", group="Autonomous")
-//@Disabled
 //Place robot backwards at atonomous because the beacon pressers are on the back, so we make the driving as if the robot was backwards
 
 public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
-    /** Declaring electronics**/
     private DcMotorController motorControllerP0;    // Motor Controller in port 0 of Core
     private DcMotorController motorControllerP1;    // Motor Controller in port 1 of Core
+    private DcMotorController motorControllerP4;    // Motor Controller in port 4 of Core
 
     private DcMotor motor1;                         // Motor 1: port 1 in Motor Controller 1
     private DcMotor motor2;                         // Motor 2: port 2 in Motor Controller 1
     private DcMotor motor3;                         // Motor 3: port 1 in Motor Controller 0
     private DcMotor motor4;                         // Motor 4: port 2 in Motor Controller 0
+    private DcMotor sweeperMotor;                   // Sweeper motor: port 1 in Motor Controller 4
+    private DcMotor launcherMotor;                  // Launcher motor: port 2 in Motor Controller 4
 
+    private ServoController servoController;
+
+    private Servo colorSensorServo;
+
+    private double servoposition = 0;//start position
     private DeviceInterfaceModule interfaceModule; //stated interface module
 
     ColorSensor colorSensor; //stated colorsensor
@@ -43,24 +51,36 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
 
     public void runOpMode() throws InterruptedException{
-        /** Initializing and mapping electronics (motors, motor controllers, servos, etc.) */
+         /* Initializing and mapping electronics*/
         motorControllerP0 = hardwareMap.dcMotorController.get("MCP0");
         motorControllerP1 = hardwareMap.dcMotorController.get("MCP1");
+        motorControllerP4 = hardwareMap.dcMotorController.get("MCP4");
 
-        motor1 = hardwareMap.dcMotor.get("motorFrontR");
-        motor2 = hardwareMap.dcMotor.get("motorFrontL");
-        motor3 = hardwareMap.dcMotor.get("motorBack1");
-        motor4 = hardwareMap.dcMotor.get("motorBack2");
 
-        /**Setting channel modes
-         *  When setting channel modes,  use the names that are declared to the motors. */
+        motor1 = hardwareMap.dcMotor.get("motorFrontL");        //MCP4
+        motor2 = hardwareMap.dcMotor.get("motorFrontR");        //MCP4
+        motor3 = hardwareMap.dcMotor.get("motorBackL");         //MCP1          Back of motor 1
+        motor4 = hardwareMap.dcMotor.get("motorBackR");         //MCP1          Back of motor 2
+
+        launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //hardwaremapping the motor for the launcher MCP0 motor 1
+        sweeperMotor = hardwareMap.dcMotor.get("motorSweeper"); //hardwaremapping the motor for the sweeper MCP0 motor 2
+
+        /*Setting channel modes*/
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motor1.setDirection(DcMotorSimple.Direction.REVERSE); //reversed these on the right side because our robot will be traveling backwards with the pokers in the back
+        launcherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor3.setDirection(DcMotorSimple.Direction.REVERSE);
+        //launcherMotor.setDirection(DcMotorSimple.Direction.REVERSE);                  We did this so that when the joystick is pushed up, the ball will launch upwards; when the joystick is pushed down, the ball will launch downwards
+
+        servoController = hardwareMap.servoController.get("SCP2"); //hardwaremapping the servo controller
+
+        colorSensorServo = hardwareMap.servo.get("servo"); //hardwaremapping the servo
 
 
         interfaceModule = hardwareMap.deviceInterfaceModule.get("DIM"); //hardware map the device interface module which controls the color sensor
@@ -109,12 +129,12 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
                 MoveForward(0.5); //go until see white tape
             }
 
-            else if ((colorSensor.argb() == 0xFFFFFFFF)){ //I believe that .argb() is the hue.
+            else if ((colorSensor.argb() > 0xFFFFFFFF) && (colorSensor.argb() < 0x808080)){ //I believe that .argb() is the hue.
                 seenTape = true; //initiates other stuff
             }
 
             //What happens when the robot sees the tape
-            if ((colorSensor.argb() == 0xFFFFFFFF) && (seenTape)){
+            if ((colorSensor.argb() > 0xFFFFFFFF) && (colorSensor.argb() < 0x808080) && (seenTape)){
                 lastTime = System.currentTimeMillis(); //get the current time now when the robot enters the tape
 
                 while(((colorSensor.argb() == 0xFFFFFFFF) && (seenTape))) {
@@ -132,6 +152,7 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
                 BackUp(0.5, changeInTime/2); //I believe this will make it so the robot moves to the center of the white tape
                 rotateLeft(0.5, turningAngleLong/rotateSpeed);
+
                 alignedToTape = true; //initiates poker stuff
             }
 
