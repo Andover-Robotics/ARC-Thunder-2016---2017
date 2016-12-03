@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.Range;
  * Created by citruseel on 10/14/2016.
  */
 
-@TeleOp(name="Thunder 2016-2016 TeleOp New Config", group="TeleOp")
+@TeleOp(name="Thunder 2016-2017 TeleOp", group="TeleOp")
 
 public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
@@ -81,7 +81,8 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         // value for the triggers is either 0.0 or 1.0
         double sweeperPower = gamepad2.left_stick_y; //sets the sweeper power equal to the value of the joysticks for the left stick of the 2nd controller
-        double launcherPower = gamepad2.right_stick_y; //sets the launcher power equal to the state of the right trigger on the second controller
+        double launcherPower = gamepad2.y ? 1 : gamepad2.a ? -1 : 0; //sets the power to the boolean next to it
+        // "?" = if "thing before ?" then "thing after ?", else "after colon"
 
         leftpower = Range.clip(leftpower, -1, 1);        //gamepad controllers have a value of 1 when you push it to its maximum foward
         rightpower = Range.clip(rightpower, -1, 1);      //range of power, min first then max
