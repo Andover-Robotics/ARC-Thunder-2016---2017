@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.hardware.ServoController;
 /**
  * Created by citruseel on 10/26/2016.
  */
-@Autonomous(name="Basic Linear Autonomous", group="Autonomous")
+@Autonomous(name="Thunder2016-2017 Autonomous Blue/Right", group="Autonomous")
 //Place robot backwards at atonomous because the beacon pressers are on the back, so we make the driving as if the robot was backwards
 
 public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
@@ -39,11 +39,11 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
 
     private Servo colorSensorServo;
 
-    private double servoposition = 0;//start position
+    private double servoposition = 0.5;//start position
     private DeviceInterfaceModule interfaceModule; //stated interface module
 
     ColorSensor colorSensor; //stated colorsensor
-    ColorSensor beaconSensor; //state beacon color sensor
+    ColorSensor beaconSensor; //state beacon color sensor, it is on the right of our robot
 
     //Each color sensor has it's own I2cAddress; they need to have unique addresses so the system doesn't get confused.
     public static final I2cAddr COLOR_SENSOR_ORIGINAL_ADDRESS = I2cAddr.create8bit(0x3c);//this is to create our own i2c address
@@ -92,79 +92,88 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
         beaconSensor.setI2cAddress(COLOR_SENSOR_CHANGED_ADDRESS); //we made it so this one has to be this address
 
         //color sensor intial states
-        colorSensor.enableLed(true);
-        beaconSensor.enableLed(true);
+        colorSensor.enableLed(true); //makes it so shadows/lighting doesn't affect it's reading
+        beaconSensor.enableLed(false); //makes it so it can see the led light behind the plastic of the beacon cover
 
-        //variables for getting the color
-        float hsvValues[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
-        float hsvValues2[] = {0F,0F,0F}; //array with (in order) hue, saturation, and value
 
         //variables for going to the tape and rotating
         boolean seenTape = false;
         boolean alignedToTape = false;
         long lastTime = System.currentTimeMillis(); //I believe gets time in milliseconds for when the robot enters the tape
         long newTime = System.currentTimeMillis(); //gets the time for when the robot leaves the tape
-        long changeInTime = (lastTime-newTime); //gets the amount of time it took for the robot to travel across the tape
+        long changeInTime = (newTime-lastTime); //gets the amount of time it took for the robot to travel across the tape
         double tapeLengthTraveled = 0; //temporary until it is changed later in the autonomous
         double tapeWidth = 2; //in inches; actual tape measurements found on http://www.andymark.com/FTC17-p/am-3160.htm
         double speed = 15.5; //robot's speed at 0.5 power in inches/seconds
         double turningAngle = Math.asin(tapeWidth/tapeLengthTraveled); //finds angle to turn(Note: I believe asin.(number) = inverse sine)
         long turningAngleLong = (long) turningAngle;//turn the turning angle into a long so that it can be used in the time
-        long rotateSpeed = 162; //robot's rotational degrees per second every 0.5 power; needs to be long so it can be used in the calculation for time
+        long rotateSpeed = 162; //robot's rotational degrees per second at 0.5 power; needs to be long so it can be used in the calculation for time
 
 
         waitForStart(); //all code below is what the robot actually does
 
         while(opModeIsActive()){
 
-            Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues); //converts the integer values recieved from each color and converts it to the array values
-            Color.RGBToHSV(beaconSensor.red(), beaconSensor.green(), beaconSensor.blue(), hsvValues2); //converts the integer values recieved from each color and converts it to the array values
-
-
-
             // What the robot will do to get to the Beacons and align to them
 
             //What happens until robot sees the tape
-            if((colorSensor.argb() != 0xFFFFFFFF)){
+            if((colorSensor.red() > 10 || colorSensor.blue() > 10 || colorSensor.green() < 10) || (colorSensor.red() < 2 || colorSensor.blue() < 2 || colorSensor.green() < 2)){ //should see anything else but white
                 MoveForward(0.5); //go until see white tape
             }
 
-            else if ((colorSensor.argb() > 0xFFFFFFFF) && (colorSensor.argb() < 0x808080)){ //I believe that .argb() is the hue.
-                seenTape = true; //initiates other stuff
+            else if (colorSensor.red() < 10 && colorSensor.blue() < 10 && colorSensor.green() < 10 && colorSensor.red() >= 2 && colorSensor.blue() >= 2 && colorSensor.green() >= 2){ //I believe this makes it see if white
+                seenTape = true; //initiates other stuff; makes all this stuff within this block of code instantaneous rather than looped
+                lastTime = System.currentTimeMillis(); //get the current time now when the robot enters the tape
             }
 
             //What happens when the robot sees the tape
-            if ((colorSensor.argb() > 0xFFFFFFFF) && (colorSensor.argb() < 0x808080) && (seenTape)){
-                lastTime = System.currentTimeMillis(); //get the current time now when the robot enters the tape
-
-                while(((colorSensor.argb() == 0xFFFFFFFF) && (seenTape))) {
+            if (colorSensor.red() < 10 && colorSensor.blue() < 10 && colorSensor.green() < 10 && colorSensor.red() >= 2 && colorSensor.blue() >= 2 && colorSensor.green() >= 2 && (seenTape)){
                     MoveForward(0.5); //move foward
-                }
             }
 
-            if ((colorSensor.argb() != 0xFFFFFFFF) && (seenTape)){
+            //what happens when the robot passes the tape
+            if ((colorSensor.red() > 10 || colorSensor.blue() > 10 || colorSensor.green() < 10) || (colorSensor.red() < 2 || colorSensor.blue() < 2 || colorSensor.green() < 2) && (seenTape)){
+
                 //update all variables
-                time = System.currentTimeMillis();
-                changeInTime = (lastTime - newTime) / 1000;
+                newTime = System.currentTimeMillis();
+                changeInTime = (newTime - lastTime) / 1000; //divide by 1000 to convert to seconds from milliseconds
                 tapeLengthTraveled = changeInTime * speed;
                 turningAngle = Math.asin(tapeWidth/tapeLengthTraveled);
                 turningAngleLong = (long) turningAngle;
 
-                BackUp(0.5, changeInTime/2); //I believe this will make it so the robot moves to the center of the white tape
-                rotateLeft(0.5, turningAngleLong/rotateSpeed);
+                BackUp(0.5, changeInTime * 1000 / 2); //I believe this will make it so the robot moves to the center of the white tape
+                rotateRight(0.5, turningAngleLong/rotateSpeed);
 
-                alignedToTape = true; //initiates poker stuff
+                alignedToTape = true; //initiates poker stuff makes it so the robot doesn't constantly repeat this block of code
             }
 
 
-            //poker stuff begins here
+            //poker stuff begins here; poker is on the right side of our robot
             if (alignedToTape == true){
 
+                //if we are on the blue team
+                if (beaconSensor.red() > beaconSensor.blue()){ //if sense red on the right
+                    servoposition = 0.95; //left
+                }
+                else if (beaconSensor.blue() > beaconSensor.red()){//if sense blue on the right
+                    servoposition = 0.05; //right
+                }
+                else {
+                    MoveForward(0.5);
+                }
             }
 
 
+            colorSensorServo.setPosition(servoposition); //constantly updates servo position and set's servo to the position
+
             //hopefully shows on phone what colors are being shown
-            telemetry.addData("Hue", hsvValues[0]);
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Green", colorSensor.green());
+            telemetry.addData("Blue ", colorSensor.blue());
+
+            telemetry.addData("Beacon Red  ", beaconSensor.red());
+            telemetry.addData("Beacon Blue ", beaconSensor.blue());
+            telemetry.addData("Beacon Green ", beaconSensor.green());
 
             telemetry.addData("Time over tape: ", changeInTime);
 
@@ -189,11 +198,11 @@ public class ThunderBasicAuto2016_2017LinearOpMode extends LinearOpMode {
         Thread.sleep(time);
     }
 
-    public void rotateLeft(double power, long time)throws InterruptedException{
-        motor1.setPower(-power);
-        motor2.setPower(power);
-        motor3.setPower(-power);
-        motor4.setPower(power);
+    public void rotateRight(double power, long time)throws InterruptedException{
+        motor1.setPower(power);
+        motor2.setPower(-power);
+        motor3.setPower(power);
+        motor4.setPower(-power);
 
         Thread.sleep(time);
     }
