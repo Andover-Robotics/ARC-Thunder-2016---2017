@@ -1,0 +1,2 @@
+These are the classes that need changes to. You probably won't be able to find them to well (actually just search "vuforia" 
+and everything to do with it be highlighted), so just copy and replace the classes.
