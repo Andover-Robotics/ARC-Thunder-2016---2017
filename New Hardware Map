@@ -1,0 +1,35 @@
+PLEASE UPDATE WHENEVER HARDWARE / CONTROL MAP CHANGES!
+
+HARDWARE MAP
+  Motor Controllers:
+    - MC_L
+    - MC_A1
+    - MC_R
+    - MC_A2
+  Servo Controllers:
+    - SC
+  Device Interface Module (DIM):
+    - DIM
+  
+  
+  Motors: 
+    - motorFrontR = MC_R
+    - motorFrontL = MC_L
+    - motorBackR = MC_R
+    - motorBackL = MC_L
+    - motorSweeper = MC_A1
+    - motorLauncher = MC_A2
+    - motorStrafe = MC_A2
+    
+  Servos:
+    - servo = SC
+              
+
+CONTROL MAP
+  Controller 1 (Driver 1):
+    - Left Joystick = controls the left side wheel speed.
+    - Right Joystick = controls the right side wheel speed.
+    
+  Controller 2 (Driver 2):
+    - Left Trigger = controls the sweeper
+    - Right Trigger = controls the launcher
