@@ -86,7 +86,7 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         // value for the triggers is either 0.0 or 1.0
         double sweeperPower = gamepad1.left_bumper ? 1: gamepad1.left_trigger > 0 ? -1: gamepad2.left_stick_y; //sets the sweeper power equal to the value of the joysticks for the left stick of the 2nd controller
-        double launcherPower = gamepad2.y ? 1 : gamepad2.a ? -1 : 0; //sets the power to the boolean next to it
+        double launcherPower = gamepad2.y ? 1 : 0; //sets the power to the boolean next to it
         // "?" = if "thing before ?" then "thing after ?", else "after colon"
 
         double strafePower = gamepad1.x ? 1 : gamepad1.b ? -1 : 0;
