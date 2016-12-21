@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <MotorController name="MC_L" serialNumber="A104OQP1">
+        <Motor name="motorFrontL" port="1" />
+        <Motor name="motorBackL" port="2" />
+    </MotorController>
+    <MotorController name="MC_A2" serialNumber="AL00VWU0">
+        <Motor name="motorStrafe" port="1" />
+    </MotorController>
+    <ServoController name="SC" serialNumber="AL00VVU2">
+        <Servo name="servo" port="1" />
+    </ServoController>
+    <MotorController name="MC_A1" serialNumber="AI049P40">
+        <Motor name="motorSweeper" port="1" />
+        <Motor name="motorLauncher" port="2" />
+    </MotorController>
+    <DeviceInterfaceModule name="DIM" serialNumber="AI02RHKL">
+    </DeviceInterfaceModule>
+    <MotorController name="MC_R" serialNumber="A104OQ68">
+        <Motor name="motorFrontR" port="1" />
+        <Motor name="motorBackR" port="2" />
+    </MotorController>
+</Robot>
