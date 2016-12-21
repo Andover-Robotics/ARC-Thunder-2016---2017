@@ -91,7 +91,7 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         double strafePower = gamepad1.x ? 1 : gamepad1.b ? -1 : 0;
 
-        servoposition = gamepad2.right_trigger > 0 ? 1: 0;
+        servoposition = gamepad2.right_trigger > 0 ? 0.6: 1;
 
         leftpower = Range.clip(leftpower, -1, 1);        //gamepad controllers have a value of 1 when you push it to its maximum foward
         rightpower = Range.clip(rightpower, -1, 1);      //range of power, min first then max
