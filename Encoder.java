@@ -53,12 +53,5 @@ public class Encoder extends OpMode {
         telemetry.addData("power", launcherMotor.getPower());
     }
 }}
-    {
-    telemetry.addData("text","run at speed");
-    telemerty.addData("power",LauncherMotor.getPower());
-    telemerty.addData("position". LauncherMotor.getCurrentPosition());
-    }
-        
- 
-}
+   
 
