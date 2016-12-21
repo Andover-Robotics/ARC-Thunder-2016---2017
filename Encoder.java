@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -13,30 +14,45 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Encoder", group="TeleOp")
 
-public class SweeperLauncherTest extends OpMode {
+public class Encoder extends OpMode {
 
+    private DcMotorController motorControllerP4;
     private DcMotor launcherMotor;
-    
+
     @override
-    public void init ()
-    {
-     launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //hardwaremapping the motor for the launcher
-     launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        
-        puvlic void LauncherEncoder()
-     double launcherPower = gamepad2.A; //sets the launcher power equal to press A button on the second controller
-        
-    launcherPower = Range.clip(launcherPower, -1, 1);//range of launcher motor values is between 0 and 1
-            }
-     
-        if(gamepad2.A==true){
-        LauncherMotor.setPower(1);
+    public void init() {
+        int distance=1440;
+        motorControllerP4 = hardwareMap.dcMotorController.get("MCP4");
+        launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //hardwaremapping the motor for the launcher
+        launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    public void LauncherEncoder {
+            boolean launcherMotor = gamepad2.a; //sets the launcher power equal to press A button on the second controller
             
-       }
-    else{
-    LauncherMotor.setPower(0);
+            
     }
-    while (initIsActive())
+
+    if(gamepad2.a==true)
+
+    {
+        launcherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        launcherMotor.setTargetPosition(distance);
+        launcherMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+
+    else
+
+    {
+
+    }
+
+
+    {
+        telemetry.addData("text", "run at speed");
+        telemetry.addData("power", launcherMotor.getPower());
+    }
+}}
     {
     telemetry.addData("text","run at speed");
     telemerty.addData("power",LauncherMotor.getPower());
