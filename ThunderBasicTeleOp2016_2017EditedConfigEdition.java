@@ -32,8 +32,6 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
     private Servo servo;
 
-    private double servoposition = 0;
-
 
     @Override
     public void init() {
@@ -63,13 +61,14 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        launcherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motor5.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor4.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcherMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -86,12 +85,11 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         // value for the triggers is either 0.0 or 1.0
         double sweeperPower = gamepad1.left_bumper ? 1: gamepad1.left_trigger > 0 ? -1: gamepad2.left_stick_y; //sets the sweeper power equal to the value of the joysticks for the left stick of the 2nd controller
-        double launcherPower = gamepad2.a ? 1 : 0; //sets the power to the boolean next to it
-        // "?" = if "thing before ?" then "thing after ?", else "after colon"
+        double launcherPower = gamepad2.y ? 1 : 0;;
 
         double strafePower = gamepad1.x ? 1 : gamepad1.b ? -1 : 0;
 
-        servoposition = gamepad2.right_trigger > 0 ? 0.6: 1;
+        double servoposition = gamepad2.right_trigger > 0 ? 0.6: 1;
 
         leftpower = Range.clip(leftpower, -1, 1);        //gamepad controllers have a value of 1 when you push it to its maximum foward
         rightpower = Range.clip(rightpower, -1, 1);      //range of power, min first then max
@@ -115,6 +113,16 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         servo.setPosition(servoposition);
 
+        if (gamepad2.a == true){
+            launcherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            do {
+               launcherMotor.setTargetPosition(1440); // 1440 ticks = one full rotation
+               launcherMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                launcherPower = 1;
+           }while(launcherMotor.getCurrentPosition() != launcherMotor.getTargetPosition());
+            launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
 
         telemetry.addData("Acceleration:", acceleration);
         telemetry.addData("Left Motor Power: ", leftpower);           //shows the data or text stated onto phone telemetry
@@ -123,6 +131,7 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         telemetry.addData("Launcher Power: ", launcherPower);
         telemetry.addData("Strafe Power: ", strafePower);
         telemetry.addData("Servo Position: ", servoposition);
+        telemetry.addData("Launcher Postion: ", launcherMotor.getCurrentPosition());
     }
 
 }
