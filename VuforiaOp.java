@@ -24,6 +24,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class VuforiaOp extends LinearOpMode {
 
+    public String phase = "Start";
+
     private DcMotorController motorControllerL;    // left motor controllers
     private DcMotorController motorControllerR;    // right motor controllers
     private DcMotorController motorControllerA1;   // Scoring motor controller
@@ -60,7 +62,7 @@ public class VuforiaOp extends LinearOpMode {
         beacons.get(3).setName("Gears");//seperates the trackables so each can be read seperately https://firstinspiresst01.blob.core.windows.net/ftc/gears.pdf
 
         //the default listerner is set to track the wheels
-        VuforiaTrackableDefaultListener wheels = (VuforiaTrackableDefaultListener) beacons.get(0).getListener();
+        VuforiaTrackableDefaultListener gears = (VuforiaTrackableDefaultListener) beacons.get(3).getListener();
 
         /*Initializing and mapping electronics*/
         motorControllerL = hardwareMap.dcMotorController.get("MC_L");
@@ -95,9 +97,13 @@ public class VuforiaOp extends LinearOpMode {
         waitForStart();
         //start robot facing the picture
 
+        telemetry.addData("Phase: ", phase);
+
         colorSensor.enableLed(false);
 
         beacons.activate(); //begins tracking
+
+        phase = "Finding image";
 
         motor1.setPower(0.1);
         motor2.setPower(0.1);
@@ -105,7 +111,7 @@ public class VuforiaOp extends LinearOpMode {
         motor4.setPower(0.1);
 
         //if the robot doesn't see wheels
-        while(opModeIsActive() && wheels.getRawPose() == null){
+        while(opModeIsActive() && gears.getRawPose() == null){
                 idle(); //just keep going forward
         }
 
@@ -115,83 +121,136 @@ public class VuforiaOp extends LinearOpMode {
         motor3.setPower(0);
         motor4.setPower(0);
 
+        Thread.sleep(1000); //stop for a very short time
+
         //possible way to approach beacons?
-        while(opModeIsActive() && (wheels.getPose() == null || Math.abs(wheels.getPose().getTranslation().get(0)) > 10 || wheels.getPose().getTranslation().get(2) > 500 || wheels.getPose().getTranslation().get(2) < 300)){
-            if (wheels.getPose() != null){
+        while(opModeIsActive() && (gears.getPose() == null || Math.abs(gears.getPose().getTranslation().get(0)) > 10)){
+            if (gears.getPose() != null){
                 //if the robot is very far off the z axis
-                if (wheels.getPose().getTranslation().get(0) > 0 && wheels.getPose().getTranslation().get(2) >= 1000){ //if you're facing the right of the picture, then rotate left
-                    motor1.setPower(0.2);
-                    motor2.setPower(0.3);
-                    motor3.setPower(0.2);
-                    motor4.setPower(0.3);
-                }
-                if (wheels.getPose().getTranslation().get(0) < 0 && wheels.getPose().getTranslation().get(2) >= 1000) {
+                if (gears.getPose().getTranslation().get(0) > 0 && gears.getPose().getTranslation().get(2) >= 150){ //if you're facing the right of the picture, then rotate left
+                    phase = "Far left rotation";
                     motor1.setPower(0.3);
                     motor2.setPower(0.2);
                     motor3.setPower(0.3);
                     motor4.setPower(0.2);
+                    telemetry.update();
+                }
+                if (gears.getPose().getTranslation().get(0) < 0 && gears.getPose().getTranslation().get(2) >= 150) {
+                    phase = "Far right rotation";
+                    motor1.setPower(0.2);
+                    motor2.setPower(0.3);
+                    motor3.setPower(0.2);
+                    motor4.setPower(0.3);
+                    telemetry.update();
                 }
 
-                if (wheels.getPose().getTranslation().get(0) > 0 && wheels.getPose().getTranslation().get(2) >= 500 && wheels.getPose().getTranslation().get(2) < 1000){
-                    motor1.setPower(0.1);
-                    motor2.setPower(0.3);
-                    motor3.setPower(0.1);
-                    motor4.setPower(0.3);
-                }
-                if (wheels.getPose().getTranslation().get(0) < 0 && wheels.getPose().getTranslation().get(2) >= 500 && wheels.getPose().getTranslation().get(2) < 1000) {
+                if (gears.getPose().getTranslation().get(0) > 0 && gears.getPose().getTranslation().get(2) >= 80 && gears.getPose().getTranslation().get(2) < 150){
+                    phase = "Left rotation";
                     motor1.setPower(0.3);
                     motor2.setPower(0.1);
                     motor3.setPower(0.3);
                     motor4.setPower(0.1);
+                    telemetry.update();
+                }
+                if (gears.getPose().getTranslation().get(0) < 0 && gears.getPose().getTranslation().get(2) >= 80 && gears.getPose().getTranslation().get(2) < 150) {
+                    phase = "Right rotation";
+                    motor1.setPower(0.1);
+                    motor2.setPower(0.3);
+                    motor3.setPower(0.1);
+                    motor4.setPower(0.3);
+                    telemetry.update();
                 }
 
                 //if the robot is very close on the z axis
-                if (wheels.getPose().getTranslation().get(0) > 0 && wheels.getPose().getTranslation().get(2) < 500 && wheels.getPose().getTranslation().get(2) >= 300){ //if the phone is facing right of the picture
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
-                    motor3.setPower(-0.3);
-                    motor4.setPower(0.3);
-                }
-                if (wheels.getPose().getTranslation().get(0) < 0 && wheels.getPose().getTranslation().get(2) < 500 && wheels.getPose().getTranslation().get(2) >= 300) { // if the phone is facing left of the picture
+                if (gears.getPose().getTranslation().get(0) > 0 && gears.getPose().getTranslation().get(2) < 80 && gears.getPose().getTranslation().get(2) >= 10){ //if the phone is facing right of the picture
+                    phase = "Close left rotation";
                     motor1.setPower(0.3);
                     motor2.setPower(-0.3);
                     motor3.setPower(0.3);
                     motor4.setPower(-0.3);
+                    telemetry.update();
+                }
+                if (gears.getPose().getTranslation().get(0) < 0 && gears.getPose().getTranslation().get(2) < 80 && gears.getPose().getTranslation().get(2) >= 10) { // if the phone is facing left of the picture
+                    phase = "Close right rotation";
+                    motor1.setPower(-0.3);
+                    motor2.setPower(0.3);
+                    motor3.setPower(-0.3);
+                    motor4.setPower(0.3);
+                    telemetry.update();
                 }
 
                 //if the robot is too close on the z axis
-                if (wheels.getPose().getTranslation().get(2) < 300) { // if the phone is facing left of the picture
+                if (gears.getPose().getTranslation().get(2) < 10) { // if the phone is facing left of the picture
+                    phase = "Too Close";
                     motor1.setPower(-0.3);
                     motor2.setPower(-0.3);
                     motor3.setPower(-0.3);
                     motor4.setPower(-0.3);
+                    telemetry.update();
                 }
 
             }
             else{ //if you lose the picture during the process, rotate to the right
-                motor1.setPower(0.3);
-                motor2.setPower(-0.3);
-                motor3.setPower(0.3);
-                motor4.setPower(-0.3);
+                phase = "Can't See";
+                motor1.setPower(-0.3);
+                motor2.setPower(0.3);
+                motor3.setPower(-0.3);
+                motor4.setPower(0.3);
+                telemetry.update();
             }
         }
 
+        phase = "Facing Picture";
+
         motor1.setPower(0);
         motor2.setPower(0);
         motor3.setPower(0);
         motor4.setPower(0);
 
+        telemetry.update();
+
+        Thread.sleep(1000);
+
+        while (opModeIsActive() && colorSensor.blue() == colorSensor.red()){
+            phase = "Can't find color";
+
+            motor1.setPower(0.3);
+            motor2.setPower(0.3);
+            motor3.setPower(0.3);
+            motor4.setPower(0.3);
+
+            telemetry.update();
+        }
+
+        //if team is red
         if (colorSensor.blue() > colorSensor.red()){
             rotateLeft(0.5,1000);
+
+            phase = "Done";
+
+            motor1.setPower(0);
+            motor2.setPower(0);
+            motor3.setPower(0);
+            motor4.setPower(0);
+
+            telemetry.update();
         }
         else if (colorSensor.blue() > colorSensor.red()){
             rotateRight(0.5,1000);
+
+            phase = "Done";
+
+            motor1.setPower(0);
+            motor2.setPower(0);
+            motor3.setPower(0);
+            motor4.setPower(0);
+
+            telemetry.update();
         }
 
-        motor1.setPower(0);
-        motor2.setPower(0);
-        motor3.setPower(0);
-        motor4.setPower(0);
+
+        phase = "Can't Find Beacons";
+        telemetry.update();
 
     }
 
