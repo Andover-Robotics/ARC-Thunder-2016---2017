@@ -3,8 +3,8 @@ PLEASE UPDATE WHENEVER HARDWARE / CONTROL MAP CHANGES!
 HARDWARE MAP
   Motor Controllers:
     - MC_L
-    - MC_A1
     - MC_R
+    - MC_A1
     - MC_A2
   Servo Controllers:
     - SC
