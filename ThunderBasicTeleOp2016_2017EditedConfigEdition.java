@@ -22,13 +22,13 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
     private DcMotorController motorControllerA2;   // Scoring motor controller
     private ServoController servoController;
 
-    private DcMotor motor1;
-    private DcMotor motor2;
-    private DcMotor motor3;
-    private DcMotor motor4;
+    private DcMotor motorFrontL;
+    private DcMotor motorFrontR;
+    private DcMotor motorBackL;
+    private DcMotor motorBackR;
     private DcMotor sweeperMotor;
-    private DcMotor launcherMotor;
-    private DcMotor motor5;
+    private DcMotor motorLauncher;
+    private DcMotor motorStrafe;
 
     private Servo servo;
 
@@ -45,32 +45,32 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
         servoController = hardwareMap.servoController.get("SC");
 
 
-        motor1 = hardwareMap.dcMotor.get("motorFrontL");        //P0 is actually the right
-        motor2 = hardwareMap.dcMotor.get("motorFrontR");        //P1 is actually the left
-        motor3 = hardwareMap.dcMotor.get("motorBackL");         //P0
-        motor4 = hardwareMap.dcMotor.get("motorBackR");         //P1
+        motorFrontL = hardwareMap.dcMotor.get("motorFrontL");        //P0 is actually the right
+        motorFrontR = hardwareMap.dcMotor.get("motorFrontR");        //P1 is actually the left
+        motorBackL = hardwareMap.dcMotor.get("motorBackL");         //P0
+        motorBackR = hardwareMap.dcMotor.get("motorBackR");         //P1
 
         servo = hardwareMap.servo.get("servo");
 
-        launcherMotor = hardwareMap.dcMotor.get("motorLauncher"); //P0
+        motorLauncher = hardwareMap.dcMotor.get("motorLauncher"); //P0
         sweeperMotor = hardwareMap.dcMotor.get("motorSweeper"); //P1
 
-        motor5 = hardwareMap.dcMotor.get("motorStrafe");//P0 A2
+        motorStrafe = hardwareMap.dcMotor.get("motorStrafe");//P0 A2
 
         /*Setting channel modes*/
-        motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motor5.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorStrafe.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        motor3.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcherMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -80,10 +80,10 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
     @Override
     public void loop() {                                          //constant loop that rechecks about every 20ms
 
-        motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double acceleration = gamepad1.right_trigger > 0 ? 0.25: gamepad1.right_bumper ? 1 : 0.6;
 
@@ -108,51 +108,51 @@ public class ThunderBasicTeleOp2016_2017EditedConfigEdition extends OpMode {
 
         servoposition = Range.clip(servoposition, 0, 1);
 
-        motor1.setPower(leftpower);                    //connects the value for power to the actual power of the motors
-        motor2.setPower(rightpower);
-        motor3.setPower(leftpower);
-        motor4.setPower(rightpower);
+        motorFrontL.setPower(leftpower);                    //connects the value for power to the actual power of the motors
+        motorFrontR.setPower(rightpower);
+        motorBackL.setPower(leftpower);
+        motorBackR.setPower(rightpower);
 
         sweeperMotor.setPower(sweeperPower);
-        launcherMotor.setPower(launcherPower);
+        motorLauncher.setPower(launcherPower);
 
-        motor5.setPower(strafePower);
+        motorStrafe.setPower(strafePower);
 
         servo.setPosition(servoposition);
 
         if (gamepad1.a == true){
-            motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         /*
         if (gamepad2.a == true && scoring == false){
-            launcherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //hopefully sets current position as 0
+            motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //hopefully sets current position as 0
             scoring = true;
-            launcherMotor.setTargetPosition(1440); // 1440 ticks = one full rotation
-            launcherMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            launcherMotor.setPower(1);
-            while (launcherMotor.isBusy() && launcherMotor.getCurrentPosition() < 1440) {
+            motorLauncher.setTargetPosition(1440); // 1440 ticks = one full rotation
+            motorLauncher.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorLauncher.setPower(1);
+            while (motorLauncher.isBusy() && motorLauncher.getCurrentPosition() < 1440) {
                 Thread.yield(); //basically idle();
             }
-            launcherMotor.setPower(0);
-            launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//makes it so that we can use it as a normal launching mechanism after one shot
+            motorLauncher.setPower(0);
+            motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//makes it so that we can use it as a normal launching mechanism after one shot
             scoring = false;
         }*/
-
-        telemetry.addData("wheel 1 ", (double) motor1.getCurrentPosition()/1440 + " rotations");
-        telemetry.addData("wheel 2 ", (double) motor2.getCurrentPosition()/1440 + " rotations");
-        telemetry.addData("wheel 3 ", (double) motor3.getCurrentPosition()/1440 + " rotations");
-        telemetry.addData("wheel 4 ", (double) motor4.getCurrentPosition()/1440 + " rotations");
-        telemetry.addData("Acceleration:", acceleration);
+        // Telemetry for the motor encoders
+        telemetry.addData("Front L Motor ", (double) motorFrontL.getCurrentPosition()/1440 + " rotations");
+        telemetry.addData("Front R Motor ", (double) motorFrontR.getCurrentPosition()/1440 + " rotations");
+        telemetry.addData("Back L Motor ", (double) motorBackL.getCurrentPosition()/1440 + " rotations");
+        telemetry.addData("Back R Motor ", (double) motorBackR.getCurrentPosition()/1440 + " rotations");
+        telemetry.addData("Acceleration ", acceleration);
         //telemetry.addData("Left Motor Power: ", leftpower);           //shows the data or text stated onto phone telemetry
         //telemetry.addData("Right Motor Power:", rightpower);
-        telemetry.addData("Sweeper Power: ", sweeperPower);
-        telemetry.addData("Launcher Power: ", launcherPower);
-        telemetry.addData("Strafe Power: ", strafePower);
-        telemetry.addData("Servo Position: ", servoposition);
-        telemetry.addData("Launcher Postion: ", launcherMotor.getCurrentPosition());
+        telemetry.addData("Sweeper Power ", sweeperPower);
+        telemetry.addData("Launcher Power ", launcherPower);
+        telemetry.addData("Strafe Power ", strafePower);
+        telemetry.addData("Servo Position ", servoposition);
+        telemetry.addData("Launcher Position ", motorLauncher.getCurrentPosition());
     }
 }
