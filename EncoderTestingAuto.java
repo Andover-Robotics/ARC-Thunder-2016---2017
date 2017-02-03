@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Encoder Testing Autonomous", group="Auto")
 public class EncoderTestingAuto extends LinearOpMode {
@@ -42,12 +43,12 @@ public class EncoderTestingAuto extends LinearOpMode {
     int tickRatio = ticksPer360Turn / ticksPerRev;
 
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
-    double ticksPerInch = (wheelDiameter * ticksPerRev * 3.14159265);
+    double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
 
 
 
 
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws  InterruptedException{
         /** This is the function that executes the code and what the robot should do **/
         // Initializes the electronics
         initElectronics(0);
@@ -107,11 +108,10 @@ public class EncoderTestingAuto extends LinearOpMode {
 
             motorStrafe = hardwareMap.dcMotor.get("motorStrafe");       //P0 A2
 
+
             /*Setting channel modes*/
-            motorFrontL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorFrontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            resetEncoders();
+            runUsingEncoders();
 
             motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -133,23 +133,37 @@ public class EncoderTestingAuto extends LinearOpMode {
                             long waitTime) throws InterruptedException {
         /** This program makes the motors move a certain distance **/
         resetEncoders();
+        runToPositionEncoders();
 
         power = Range.clip(power, -1, 1);
 
+        // Setting the target positions
         motorFrontL.setTargetPosition((int)(leftInches * ticksPerInch));
         motorFrontR.setTargetPosition((int)(rightInches * ticksPerInch));
         motorBackL.setTargetPosition((int)(leftInches * ticksPerInch));
         motorBackR.setTargetPosition((int)(rightInches * ticksPerInch));
 
+        // Sets the motors' position
         motorFrontL.setPower(power);
         motorFrontR.setPower(power);
         motorBackL.setPower(power);
         motorBackR.setPower(power);
 
         while(motorFrontL.isBusy() && motorFrontR.isBusy() &&
-                motorBackL.isBusy() && motorBackR.isBusy()) {
+                motorBackL.isBusy() && motorBackR.isBusy() && opModeIsActive()){
 
+            // Adds telemetry of the drive motors
+            telemetry.addData("MotorFrontL", motorFrontL.getCurrentPosition());
+            telemetry.addData("MotorFrontR", motorFrontR.getCurrentPosition());
+            telemetry.addData("MotorBackL", motorBackL.getCurrentPosition());
+            telemetry.addData("MotorBackR", motorBackL.getCurrentPosition());
+
+            // Updates the telemetry
+            telemetry.update();
         }
+
+        runUsingEncoders();
+
     }
 
     public void turnLeft(double leftRotation, long time) throws InterruptedException {
@@ -161,36 +175,72 @@ public class EncoderTestingAuto extends LinearOpMode {
          *  360 degrees =~ 4600
          *  180 degrees =~ 2300   **/
         resetEncoders();
+        runToPositionEncoders();
 
         power = Range.clip(power, -1, 1);
 
+        // Setting the target positions
         motorFrontL.setTargetPosition(robotDegrees * tickRatio);
         motorFrontR.setTargetPosition(robotDegrees * -tickRatio);
         motorBackL.setTargetPosition(robotDegrees * tickRatio);
         motorBackR.setTargetPosition(robotDegrees * -tickRatio);
 
+        // Sets the motors' positions
         motorFrontL.setPower(power);
         motorFrontR.setPower(power);
         motorBackL.setPower(power);
         motorBackR.setPower(power);
+
+        while(motorFrontL.isBusy() && motorFrontR.isBusy() &&
+                motorBackL.isBusy() && motorBackR.isBusy() && opModeIsActive()){
+
+            // Adds telemetry of the drive motors
+            telemetry.addData("MotorFrontL", motorFrontL.getCurrentPosition());
+            telemetry.addData("MotorFrontR", motorFrontR.getCurrentPosition());
+            telemetry.addData("MotorBackL", motorBackL.getCurrentPosition());
+            telemetry.addData("MotorBackR", motorBackL.getCurrentPosition());
+
+            // Updates the telemetry
+            telemetry.update();
+        }
+
+        runUsingEncoders();
     }
     public void rotateDegreesRight(double power, int robotDegrees) throws  InterruptedException {
         /** Robot requires values of...
          *  360 degrees =~ 4600
          *  180 degrees =~ 2300   **/
         resetEncoders();
+        runToPositionEncoders();
 
         power = Range.clip(power, -1, 1);
 
+        // Setting the target positions
         motorFrontL.setTargetPosition(robotDegrees * -tickRatio);
         motorFrontR.setTargetPosition(robotDegrees * tickRatio);
         motorBackL.setTargetPosition(robotDegrees * -tickRatio);
         motorBackR.setTargetPosition(robotDegrees * tickRatio);
 
+        // Sets the motors' powers
         motorFrontL.setPower(power);
         motorFrontR.setPower(power);
         motorBackL.setPower(power);
         motorBackR.setPower(power);
+
+        while(motorFrontL.isBusy() && motorFrontR.isBusy() &&
+                motorBackL.isBusy() && motorBackR.isBusy() && opModeIsActive()){
+
+            // Adds telemetry of the drive motors
+            telemetry.addData("MotorFrontL", motorFrontL.getCurrentPosition());
+            telemetry.addData("MotorFrontR", motorFrontR.getCurrentPosition());
+            telemetry.addData("MotorBackL", motorBackL.getCurrentPosition());
+            telemetry.addData("MotorBackR", motorBackL.getCurrentPosition());
+
+            // Updates the telemetry
+            telemetry.update();
+        }
+        
+        runUsingEncoders();
     }
 
     public void resetEncoders() {
@@ -208,6 +258,12 @@ public class EncoderTestingAuto extends LinearOpMode {
         motorFrontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void runUsingEncoders() {
+        motorFrontL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void addTelemetryData(String string1, String string2) {
         telemetry.addData(string1, string2);
