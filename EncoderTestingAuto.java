@@ -135,6 +135,7 @@ public class EncoderTestingAuto extends LinearOpMode {
         resetEncoders();
         runToPositionEncoders();
 
+        // Sets the power range
         power = Range.clip(power, -1, 1);
 
         // Setting the target positions
@@ -162,6 +163,9 @@ public class EncoderTestingAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        // Stops the motors
+        stopMotion();
+
         runUsingEncoders();
 
     }
@@ -177,6 +181,7 @@ public class EncoderTestingAuto extends LinearOpMode {
         resetEncoders();
         runToPositionEncoders();
 
+        // Sets the power range
         power = Range.clip(power, -1, 1);
 
         // Setting the target positions
@@ -204,6 +209,9 @@ public class EncoderTestingAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        // Stops the motors
+        stopMotion();
+
         runUsingEncoders();
     }
     public void rotateDegreesRight(double power, int robotDegrees) throws  InterruptedException {
@@ -213,6 +221,7 @@ public class EncoderTestingAuto extends LinearOpMode {
         resetEncoders();
         runToPositionEncoders();
 
+        // Sets the power range
         power = Range.clip(power, -1, 1);
 
         // Setting the target positions
@@ -239,7 +248,10 @@ public class EncoderTestingAuto extends LinearOpMode {
             // Updates the telemetry
             telemetry.update();
         }
-        
+
+        // Stops the motors
+        stopMotion();
+
         runUsingEncoders();
     }
 
@@ -260,6 +272,7 @@ public class EncoderTestingAuto extends LinearOpMode {
         motorBackR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void runUsingEncoders() {
+        /** Sets the encoders to RUN_USING_POSITION **/
         motorFrontL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -268,5 +281,12 @@ public class EncoderTestingAuto extends LinearOpMode {
     public void addTelemetryData(String string1, String string2) {
         telemetry.addData(string1, string2);
         telemetry.update();
+    }
+    public void stopMotion() {
+        /** Stops all motor motion**/
+        motorFrontL.setPower(0);
+        motorFrontR.setPower(0);
+        motorBackL.setPower(0);
+        motorBackR.setPower(0);
     }
 }
