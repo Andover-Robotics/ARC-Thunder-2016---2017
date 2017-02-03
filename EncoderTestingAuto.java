@@ -35,17 +35,29 @@ public class EncoderTestingAuto extends LinearOpMode {
 
     private Servo servo;                                // Gate Motor on the Robot
 
+    /** For Encoders and specific turn values**/
+    int ticksPerRev = 1120;             // This is the specific value for AndyMark motors
+    int ticksPer360Turn = 4600;         // The amount of ticks for a 360 degree turn
+    int tickRatio = ticksPer360Turn / ticksPerRev;
+
+    double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
+    double ticksPerInch = (wheelDiameter * ticksPerRev * 3.14159265);
+
+
 
 
     public void runOpMode() throws InterruptedException {
+        /** This is the function that executes the code and what the robot should do **/
         // Initializes the electronics
         initElectronics(0);
 
         waitForStart();
 
-        rotateDegreesLeft(360);
-        rotateDegreesRight(360);
-        rotateDegreesLeft(30);
+        rotateDegreesLeft(0.4, 360);
+        rotateDegreesRight(0.4, 360);
+        rotateDegreesLeft(0.4, 30);
+        rotateDegreesRight(0.4, 30);
+        encoderMove(0.25, 6, 6, 2);
 
 
     }
@@ -73,10 +85,10 @@ public class EncoderTestingAuto extends LinearOpMode {
             motorStrafe = hardwareMap.dcMotor.get("motorStrafe");       //P0 A2
 
             /*Setting channel modes*/
-            motorFrontL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorFrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorBackL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorBackR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -93,46 +105,76 @@ public class EncoderTestingAuto extends LinearOpMode {
 
     }
 
-    public void move(double power, long time) throws InterruptedException {
+    public void encoderMove(double power,
+                            double leftInches, double rightInches,
+                            long waitTime) throws InterruptedException {
+        /** This program makes the motors move a certain distance **/
+        resetEncoders();
+
+        motorFrontL.setTargetPosition((int)(leftInches * ticksPerInch));
+        motorFrontR.setTargetPosition((int)(rightInches * ticksPerInch));
+        motorBackL.setTargetPosition((int)(leftInches * ticksPerInch));
+        motorBackR.setTargetPosition((int)(rightInches * ticksPerInch));
+
         motorFrontL.setPower(power);
         motorFrontR.setPower(power);
         motorBackL.setPower(power);
         motorBackR.setPower(power);
 
-        Thread.sleep(time);
+        Thread.sleep(waitTime);
     }
 
     public void turnLeft(double leftRotation, long time) throws InterruptedException {
 
     }
 
-    public void rotateDegreesLeft(int robotDegrees) throws  InterruptedException {
+    public void rotateDegreesLeft(double power, int robotDegrees) throws  InterruptedException {
         /** Robot requires values of...
          *  360 degrees =~ 4600
          *  180 degrees =~ 2300   **/
         resetEncoders();
 
-        motorFrontL.setTargetPosition(robotDegrees * (115 / 9));
-        motorFrontR.setTargetPosition(robotDegrees * -(115 / 9));
-        motorBackL.setTargetPosition(robotDegrees * (115 / 9));
-        motorBackR.setTargetPosition(robotDegrees * -(115 / 9));
+        motorFrontL.setTargetPosition(robotDegrees * tickRatio);
+        motorFrontR.setTargetPosition(robotDegrees * -tickRatio);
+        motorBackL.setTargetPosition(robotDegrees * tickRatio);
+        motorBackR.setTargetPosition(robotDegrees * -tickRatio);
+
+        motorFrontL.setPower(power);
+        motorFrontR.setPower(power);
+        motorBackL.setPower(power);
+        motorBackR.setPower(power);
     }
-    public void rotateDegreesRight(int robotDegrees) throws  InterruptedException {
+    public void rotateDegreesRight(double power, int robotDegrees) throws  InterruptedException {
         /** Robot requires values of...
          *  360 degrees =~ 4600
          *  180 degrees =~ 2300   **/
         resetEncoders();
 
-        motorFrontL.setTargetPosition(robotDegrees * -(115 / 9));
-        motorFrontR.setTargetPosition(robotDegrees * (115 / 9));
-        motorBackL.setTargetPosition(robotDegrees * -(115 / 9));
-        motorBackR.setTargetPosition(robotDegrees * (115 / 9));
+        motorFrontL.setTargetPosition(robotDegrees * -tickRatio);
+        motorFrontR.setTargetPosition(robotDegrees * tickRatio);
+        motorBackL.setTargetPosition(robotDegrees * -tickRatio);
+        motorBackR.setTargetPosition(robotDegrees * tickRatio);
+
+        motorFrontL.setPower(power);
+        motorFrontR.setPower(power);
+        motorBackL.setPower(power);
+        motorBackR.setPower(power);
     }
+
     public void resetEncoders() {
         /** Resets the encoder values on each of the motors **/
         motorFrontL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //motorFrontR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+    }
+    public void runToPositionEncoders() {
+        /** Toggles the encoders to run to position mode **/
+        motorFrontL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
