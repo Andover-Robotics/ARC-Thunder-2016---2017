@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name="Encoder Testing Autonomous", group="Auto")
 public class EncoderTestingAuto extends LinearOpMode {
@@ -51,13 +52,35 @@ public class EncoderTestingAuto extends LinearOpMode {
         // Initializes the electronics
         initElectronics(0);
 
+        telemetry.addData("Phase 1", "Init");
+        telemetry.update();
+
         waitForStart();
 
+        telemetry.addData("Started Robot", "Now");
+        telemetry.update();
+
+        runToPositionEncoders();
+
         rotateDegreesLeft(0.4, 360);
+        telemetry.addData("Execute", "360 Left");
+        telemetry.update();
+
         rotateDegreesRight(0.4, 360);
+        telemetry.addData("Execute", "360 Right");
+        telemetry.update();
+
         rotateDegreesLeft(0.4, 30);
+        telemetry.addData("Execute", "30 Left");
+        telemetry.update();
+
         rotateDegreesRight(0.4, 30);
+        telemetry.addData("Execute", "30 Right");
+        telemetry.update();
+
         encoderMove(0.25, 6, 6, 2);
+        telemetry.addData("Execute", "move 6 in");
+        telemetry.update();
 
 
     }
@@ -111,6 +134,8 @@ public class EncoderTestingAuto extends LinearOpMode {
         /** This program makes the motors move a certain distance **/
         resetEncoders();
 
+        power = Range.clip(power, -1, 1);
+
         motorFrontL.setTargetPosition((int)(leftInches * ticksPerInch));
         motorFrontR.setTargetPosition((int)(rightInches * ticksPerInch));
         motorBackL.setTargetPosition((int)(leftInches * ticksPerInch));
@@ -121,7 +146,10 @@ public class EncoderTestingAuto extends LinearOpMode {
         motorBackL.setPower(power);
         motorBackR.setPower(power);
 
-        Thread.sleep(waitTime);
+        while(motorFrontL.isBusy() && motorFrontR.isBusy() &&
+                motorBackL.isBusy() && motorBackR.isBusy()) {
+
+        }
     }
 
     public void turnLeft(double leftRotation, long time) throws InterruptedException {
@@ -133,6 +161,8 @@ public class EncoderTestingAuto extends LinearOpMode {
          *  360 degrees =~ 4600
          *  180 degrees =~ 2300   **/
         resetEncoders();
+
+        power = Range.clip(power, -1, 1);
 
         motorFrontL.setTargetPosition(robotDegrees * tickRatio);
         motorFrontR.setTargetPosition(robotDegrees * -tickRatio);
@@ -149,6 +179,8 @@ public class EncoderTestingAuto extends LinearOpMode {
          *  360 degrees =~ 4600
          *  180 degrees =~ 2300   **/
         resetEncoders();
+
+        power = Range.clip(power, -1, 1);
 
         motorFrontL.setTargetPosition(robotDegrees * -tickRatio);
         motorFrontR.setTargetPosition(robotDegrees * tickRatio);
@@ -176,5 +208,9 @@ public class EncoderTestingAuto extends LinearOpMode {
         motorFrontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void addTelemetryData(String string1, String string2) {
+        telemetry.addData(string1, string2);
+        telemetry.update();
     }
 }
