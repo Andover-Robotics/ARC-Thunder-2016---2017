@@ -39,16 +39,12 @@ public class EncoderTestingAuto extends LinearOpMode {
 
     /** For Encoders and specific turn values **/
     int ticksPerRev = 1120;             // This is the specific value for AndyMark motors
-    int ticksPer360Turn = 4600;         // The amount of ticks for a 360 degree turn
+    int ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
     int tickTurnRatio = ticksPer360Turn / 360;
 
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
     double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
 
-    double frontLPos = motorFrontL.getCurrentPosition();
-    double frontRPos = motorFrontR.getCurrentPosition();
-    double backLPos = motorBackL.getCurrentPosition();
-    double backRPos = motorBackR.getCurrentPosition();
 
 
 
@@ -73,7 +69,7 @@ public class EncoderTestingAuto extends LinearOpMode {
         telemetry.addData("Execute", "360 Left");
         telemetry.update();
 
-        rotateDegreesLeft(-0.4, 360);   // Setting the power to a negative makes it turn right
+        rotateDegreesRight(0.4, 360);   // Setting the power to a negative makes it turn right
         telemetry.addData("Execute", "360 Right");
         telemetry.update();
 
@@ -81,7 +77,7 @@ public class EncoderTestingAuto extends LinearOpMode {
         telemetry.addData("Execute", "30 Left");
         telemetry.update();
 
-        rotateDegreesLeft(-0.4, 30);
+        rotateDegreesRight(0.4, 30);
         telemetry.addData("Execute", "30 Right");
         telemetry.update();
 
@@ -143,10 +139,10 @@ public class EncoderTestingAuto extends LinearOpMode {
         power = Range.clip(power, -1, 1);
 
         // Setting the target positions
-        motorFrontL.setTargetPosition((int)(leftInches * ticksPerInch));
-        motorFrontR.setTargetPosition((int)(rightInches * ticksPerInch));
-        motorBackL.setTargetPosition((int)(leftInches * ticksPerInch));
-        motorBackR.setTargetPosition((int)(rightInches * ticksPerInch));
+        motorFrontL.setTargetPosition((int)(leftInches * -ticksPerInch));
+        motorFrontR.setTargetPosition((int)(rightInches * -ticksPerInch));
+        motorBackL.setTargetPosition((int)(leftInches * -ticksPerInch));
+        motorBackR.setTargetPosition((int)(rightInches * -ticksPerInch));
 
         runToPositionEncoders();
 
@@ -161,10 +157,10 @@ public class EncoderTestingAuto extends LinearOpMode {
                 motorBackL.isBusy() && motorBackR.isBusy() && opModeIsActive()){
 
             // Updates the position of the motors
-            frontLPos = motorFrontL.getCurrentPosition();
-            frontRPos = motorFrontR.getCurrentPosition();
-            backLPos = motorBackL.getCurrentPosition();
-            backRPos = motorBackR.getCurrentPosition();
+            double frontLPos = motorFrontL.getCurrentPosition();
+            double frontRPos = motorFrontR.getCurrentPosition();
+            double backLPos = motorBackL.getCurrentPosition();
+            double backRPos = motorBackR.getCurrentPosition();
 
             // Adds telemetry of the drive motors
             telemetry.addData("MotorFrontL Pos", frontLPos);
@@ -220,10 +216,63 @@ public class EncoderTestingAuto extends LinearOpMode {
                 motorBackL.isBusy() && motorBackR.isBusy() && opModeIsActive()){
 
             // Updates the position of the motors
-            frontLPos = motorFrontL.getCurrentPosition();
-            frontRPos = motorFrontR.getCurrentPosition();
-            backLPos = motorBackL.getCurrentPosition();
-            backRPos = motorBackR.getCurrentPosition();
+            double frontLPos = motorFrontL.getCurrentPosition();
+            double frontRPos = motorFrontR.getCurrentPosition();
+            double backLPos = motorBackL.getCurrentPosition();
+            double backRPos = motorBackR.getCurrentPosition();
+
+            // Adds telemetry of the drive motors
+            telemetry.addData("MotorFrontL Pos", frontLPos);
+            telemetry.addData("MotorFrontR Pos", frontRPos);
+            telemetry.addData("MotorBackL Pos", backLPos);
+            telemetry.addData("MotorBackR Pos", backRPos);
+
+            // Updates the telemetry
+            telemetry.update();
+
+        }
+
+        // Stops the motors
+        stopMotion();
+
+        // Resets to run using encoders mode
+        runUsingEncoders();
+    }
+    public void rotateDegreesRight(double power, int robotDegrees) throws  InterruptedException {
+        /** Robot requires values of...
+         *  360 degrees =~ 4600 ticks
+         *  180 degrees =~ 2300 ticks  **/
+
+        /** This method, given an input amount of degrees, makes the robot turn
+         *  the amount of degrees specified around ITS center of rotation **/
+        resetEncoders();
+
+        // Sets the power range
+        power = Range.clip(power, -1, 1);
+
+        // Setting the target positions
+        motorFrontL.setTargetPosition(robotDegrees * -tickTurnRatio);
+        motorFrontR.setTargetPosition(robotDegrees * tickTurnRatio);
+        motorBackL.setTargetPosition(robotDegrees * -tickTurnRatio);
+        motorBackR.setTargetPosition(robotDegrees * tickTurnRatio);
+
+        runToPositionEncoders();
+
+        // Sets the motors' positions
+        motorFrontL.setPower(power);
+        motorFrontR.setPower(power);
+        motorBackL.setPower(power);
+        motorBackR.setPower(power);
+
+        // While loop for updating telemetry
+        while(motorFrontL.isBusy() && motorFrontR.isBusy() &&
+                motorBackL.isBusy() && motorBackR.isBusy() && opModeIsActive()){
+
+            // Updates the position of the motors
+            double frontLPos = motorFrontL.getCurrentPosition();
+            double frontRPos = motorFrontR.getCurrentPosition();
+            double backLPos = motorBackL.getCurrentPosition();
+            double backRPos = motorBackR.getCurrentPosition();
 
             // Adds telemetry of the drive motors
             telemetry.addData("MotorFrontL Pos", frontLPos);
