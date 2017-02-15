@@ -192,7 +192,6 @@ public class EncoderTestingAuto extends LinearOpMode {
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
-        resetEncoders();
 
         // Sets the power range
         power = Range.clip(power, -1, 1);
@@ -250,7 +249,6 @@ public class EncoderTestingAuto extends LinearOpMode {
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
-        resetEncoders();
 
         // Sets the power range
         power = Range.clip(power, -1, 1);
@@ -302,12 +300,13 @@ public class EncoderTestingAuto extends LinearOpMode {
     }
 
 
-    public void resetEncoders() {
+    public void resetEncoders() throws InterruptedException{
         /** Resets the encoder values on each of the drive motors **/
         motorFrontL.setMode(DcMotor.RunMode.RESET_ENCODERS);
         motorFrontR.setMode(DcMotor.RunMode.RESET_ENCODERS);
         motorBackL.setMode(DcMotor.RunMode.RESET_ENCODERS);
         motorBackR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        waitOneFullHardwareCycle();
     }
 
     public void runToPositionEncoders() {

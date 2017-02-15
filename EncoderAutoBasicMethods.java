@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
  * Created by Alex Z on 2/14/2017.
  */
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,6 +16,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDevice;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /** NOTE:
@@ -22,7 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  *  base for potential encoder autonomous programs.
  */
 
-@Disabled
 @Autonomous(name="Basic Method Autonomous", group="Encoder Auto")
 public class EncoderAutoBasicMethods extends LinearOpMode {
 
@@ -53,6 +63,11 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
     double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
 
+    /** Color Sensor Stuffs **/
+    ColorSensor colorBeacon;
+
+    boolean LEDState = false;       // Tracks the mode of the color sensor; Active = true, Passive = false
+
 
 
 
@@ -72,6 +87,32 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         runToPositionEncoders();
 
         /* Your code beneath this */
+        colorBeacon.enableLed(LEDState);
+
+        float hsvValues[] = {0, 0, 0};
+
+
+        Color.RGBToHSV(colorBeacon.red() * 8, colorBeacon.green() * 8, colorBeacon.blue() * 8, hsvValues);
+
+        telemetry.addData("2 Clear", colorBeacon.alpha());
+        telemetry.addData("4 Green", colorBeacon.green());
+        telemetry.addData("3 Red", colorBeacon.red());
+        telemetry.addData("6 Hue", hsvValues[0]);
+        telemetry.addData("5 Blue", colorBeacon.blue());
+
+        // Robot is on blue team
+        if(colorBeacon.red() > colorBeacon.blue() && colorBeacon.red() > colorBeacon.green()) {
+            rotateDegreesLeft(0.2, 20);
+        }
+        else if(colorBeacon.blue() > colorBeacon.red() && colorBeacon.blue() > colorBeacon.green()) {
+            rotateDegreesRight(0.2, 20);
+        }
+        else {
+            encoderMove(0.3, -2, -2);
+        }
+
+        waitOneFullHardwareCycle();
+
 
     }
 
@@ -140,7 +181,6 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
-        resetEncoders();
 
         // Sets the power range
         power = Range.clip(power, -1, 1);
@@ -198,7 +238,6 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
-        resetEncoders();
 
         // Sets the power range
         power = Range.clip(power, -1, 1);
@@ -304,12 +343,13 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         }
     }
 
-    public void resetEncoders() {
+    public void resetEncoders() throws InterruptedException{
         /** Resets the encoder values on each of the drive motors **/
         motorFrontL.setMode(DcMotor.RunMode.RESET_ENCODERS);
         motorFrontR.setMode(DcMotor.RunMode.RESET_ENCODERS);
         motorBackL.setMode(DcMotor.RunMode.RESET_ENCODERS);
         motorBackR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        waitOneFullHardwareCycle();
     }
 
     public void runToPositionEncoders() {
@@ -340,6 +380,7 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         // To make the initialization of electronics much easier and nicer to read
         /** Initializing and mapping electronics **/
         if (mode == 0) {
+            /* Motors and servos (w/ controllers) */
             motorControllerL = hardwareMap.dcMotorController.get("MC_L");
             motorControllerR = hardwareMap.dcMotorController.get("MC_R");
             motorControllerA1 = hardwareMap.dcMotorController.get("MC_A1");
@@ -357,6 +398,13 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
             sweeperMotor = hardwareMap.dcMotor.get("motorSweeper");     //P1
 
             motorStrafe = hardwareMap.dcMotor.get("motorStrafe");       //P0 A2
+
+
+
+            /* Sensors */
+            colorBeacon = hardwareMap.colorSensor.get("colorBeacon");
+
+
 
             /*Setting channel modes*/
             runUsingEncoders();

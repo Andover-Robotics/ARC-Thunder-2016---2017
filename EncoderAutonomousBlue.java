@@ -22,7 +22,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  *  base for potential encoder autonomous programs.
  */
 
-@Disabled
 @Autonomous(name="Basic Method Autonomous", group="Encoder Auto")
 public class EncoderAutonomousBlue extends LinearOpMode {
 
@@ -140,7 +139,6 @@ public class EncoderAutonomousBlue extends LinearOpMode {
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
-        resetEncoders();
 
         // Sets the power range
         power = Range.clip(power, -1, 1);
@@ -198,7 +196,6 @@ public class EncoderAutonomousBlue extends LinearOpMode {
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
-        resetEncoders();
 
         // Sets the power range
         power = Range.clip(power, -1, 1);
