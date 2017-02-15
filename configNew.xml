@@ -15,6 +15,7 @@
         <Motor name="motorLauncher" port="2" />
     </MotorController>
     <DeviceInterfaceModule name="DIM" serialNumber="AI02RHKL">
+        <ColorSensor name="colorBeacon" port="5" />
     </DeviceInterfaceModule>
     <MotorController name="MC_R" serialNumber="A104OQ68">
         <Motor name="motorFrontR" port="1" />
