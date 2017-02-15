@@ -99,6 +99,10 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         telemetry.addData("3 Red", colorBeacon.red());
         telemetry.addData("6 Hue", hsvValues[0]);
         telemetry.addData("5 Blue", colorBeacon.blue());
+        
+        Thread.sleep(5000);
+        
+        telemetry.update();
 
         // Robot is on blue team
         if(colorBeacon.red() > colorBeacon.blue() && colorBeacon.red() > colorBeacon.green()) {
@@ -108,7 +112,7 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
             rotateDegreesRight(0.2, 20);
         }
         else {
-            encoderMove(0.3, -2, -2);
+            encoderMove(0.3, 2, 2);
         }
 
         waitOneFullHardwareCycle();
