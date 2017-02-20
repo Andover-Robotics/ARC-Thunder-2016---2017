@@ -23,11 +23,19 @@ Remember, only one person edits or changes code at one time. Also, update code o
   
 ### Wireless Debugging in Android Studio using ADB
 [Video Resource] (https://www.youtube.com/watch?v=YtZ55JabfPc)
+
+
 Prerequisites: Android Studio, ADB
+
 1.) Connect Robot Controller phone through USB
+
 2.) Open up command prompt
+
 3.) Set the TCPIP mdoe to 5555 using "adb tcpip 5555"
+
 4.) Connect the phone to port 5555 using "adb connect device-ip:5555", where device-ip is your device's IP adress
+
 5.) Done
+
 
 To disconnect, use "adb -s device-ip:5555 usb"
