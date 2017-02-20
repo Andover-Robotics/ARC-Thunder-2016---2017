@@ -21,5 +21,13 @@ Remember, only one person edits or changes code at one time. Also, update code o
   - This gives a basic rundown of how to use Android Studio in coding for the robot.
   - This presentation is made for to last year's FTC app (2015-2016), so some of the code might be outdated. 
   
-## Robot Statistics (Last updated 11/16/2016)
-  - At 0.5 power, the robot travels 31 inches in 2 seconds (15.5 in/s, about 0.9 mph)
+### Wireless Debugging in Android Studio using ADB
+[Video Resource] (https://www.youtube.com/watch?v=YtZ55JabfPc)
+Prerequisites: Android Studio, ADB
+1.) Connect Robot Controller phone through USB
+2.) Open up command prompt
+3.) Set the TCPIP mdoe to 5555 using "adb tcpip 5555"
+4.) Connect the phone to port 5555 using "adb connect device-ip:5555", where device-ip is your device's IP adress
+5.) Done
+
+To disconnect, use "adb -s device-ip:5555 usb"
