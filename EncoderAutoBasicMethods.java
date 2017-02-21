@@ -56,9 +56,10 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
 
 
     /** For Encoders and specific turn values **/
-    int ticksPerRev = 1120;             // This is the specific value for AndyMark motors
-    int ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
-    int tickTurnRatio = ticksPer360Turn / 360;
+    double ticksPerRev = 1120;             // This is the specific value for AndyMark motors
+    double ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
+    double tickTurnRatio = ticksPer360Turn / 360;
+    double inchToMm = 25.4;             // For conversion between the vectors
 
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
     double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
@@ -72,50 +73,23 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
 
 
     public void runOpMode() throws  InterruptedException{
-        /** This is the method that executes the code and what the robot should do **/
+         /** This is the method that executes the code and what the robot should do **/
+        // Call any variables not stated before
+
         // Initializes the electronics
-        initElectronics(0);
+         initElectronics(0);
 
-        telemetry.addData("Phase 1", "Init");
-        telemetry.update();
+         telemetry.addData("Phase 1", "Init");
+         telemetry.update();
 
-        waitForStart();
+         waitForStart();
 
-        telemetry.addData("Started Robot", "Now");
-        telemetry.update();
+         telemetry.addData("Started Robot", "Now");
+         telemetry.update();
 
-        runToPositionEncoders();
+         runToPositionEncoders();
 
-        /* Your code beneath this */
-        colorBeacon.enableLed(LEDState);
-
-        float hsvValues[] = {0, 0, 0};
-
-
-        Color.RGBToHSV(colorBeacon.red() * 8, colorBeacon.green() * 8, colorBeacon.blue() * 8, hsvValues);
-
-        telemetry.addData("2 Clear", colorBeacon.alpha());
-        telemetry.addData("4 Green", colorBeacon.green());
-        telemetry.addData("3 Red", colorBeacon.red());
-        telemetry.addData("6 Hue", hsvValues[0]);
-        telemetry.addData("5 Blue", colorBeacon.blue());
-        
-        Thread.sleep(5000);
-        
-        telemetry.update();
-
-        // Robot is on blue team
-        if(colorBeacon.red() > colorBeacon.blue() && colorBeacon.red() > colorBeacon.green()) {
-            rotateDegreesLeft(0.2, 20);
-        }
-        else if(colorBeacon.blue() > colorBeacon.red() && colorBeacon.blue() > colorBeacon.green()) {
-            rotateDegreesRight(0.2, 20);
-        }
-        else {
-            encoderMove(0.3, 2, 2);
-        }
-
-        waitOneFullHardwareCycle();
+         /* Your code beneath this */
 
 
     }
@@ -191,13 +165,13 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         power = Math.abs(power);
 
         // Setting variables
-        int robotTurn = robotDegrees * tickTurnRatio;
+        double robotTurn = robotDegrees * tickTurnRatio;
 
         // Setting the target positions
-        motorFrontL.setTargetPosition(motorFrontL.getCurrentPosition() + robotTurn);
-        motorFrontR.setTargetPosition(motorFrontR.getCurrentPosition() + -robotTurn);
-        motorBackL.setTargetPosition(motorBackL.getCurrentPosition() + robotTurn);
-        motorBackR.setTargetPosition(motorBackR.getCurrentPosition() + -robotTurn);
+        motorFrontL.setTargetPosition((int)(motorFrontL.getCurrentPosition() + robotTurn));
+        motorFrontR.setTargetPosition((int)(motorFrontR.getCurrentPosition() + -robotTurn));
+        motorBackL.setTargetPosition((int)(motorBackL.getCurrentPosition() + robotTurn));
+        motorBackR.setTargetPosition((int)(motorBackR.getCurrentPosition() + -robotTurn));
 
         runToPositionEncoders();
 
@@ -248,13 +222,13 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         power = Math.abs(power);
 
         // Setting variables
-        int robotTurn = robotDegrees * tickTurnRatio;
+        double robotTurn = robotDegrees * tickTurnRatio;
 
         // Setting the target positions
-        motorFrontL.setTargetPosition(motorFrontL.getCurrentPosition() + -robotTurn);
-        motorFrontR.setTargetPosition(motorFrontR.getCurrentPosition() + robotTurn);
-        motorBackL.setTargetPosition(motorBackL.getCurrentPosition() + -robotTurn);
-        motorBackR.setTargetPosition(motorBackR.getCurrentPosition() + robotTurn);
+        motorFrontL.setTargetPosition((int)(motorFrontL.getCurrentPosition() + -robotTurn));
+        motorFrontR.setTargetPosition((int)(motorFrontR.getCurrentPosition() + robotTurn));
+        motorBackL.setTargetPosition((int)(motorBackL.getCurrentPosition() + -robotTurn));
+        motorBackR.setTargetPosition((int)(motorBackR.getCurrentPosition() + robotTurn));
 
         runToPositionEncoders();
 
@@ -299,6 +273,7 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         motorBackL.setPower(0);
         motorBackR.setPower(0);
     }
+    /** ----------------------------------------- **/
 
 
 
@@ -376,6 +351,7 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         telemetry.addData(string1, string2);
         telemetry.update();
     }
+    /** ----------------------------------------- **/
 
 
 
@@ -427,6 +403,7 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
         }
 
     }
+    /** ----------------------------------------- **/
 
 
 }

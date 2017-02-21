@@ -38,9 +38,10 @@ public class EncoderTestingAuto extends LinearOpMode {
     private Servo servo;                                // Ball Queue Servo
 
     /** For Encoders and specific turn values **/
-    int ticksPerRev = 1120;             // This is the specific value for AndyMark motors
-    int ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
-    int tickTurnRatio = ticksPer360Turn / 360;
+    double ticksPerRev = 1120;             // This is the specific value for AndyMark motors
+    double ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
+    double tickTurnRatio = ticksPer360Turn / 360;
+    double inchToMm = 25.4;             // For conversion between the vectors
 
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
     double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
@@ -88,47 +89,7 @@ public class EncoderTestingAuto extends LinearOpMode {
 
     }
 
-    public void initElectronics(int mode) throws InterruptedException {
-        // To make the initialization of electronics much easier and nicer to read
-        /** Initializing and mapping electronics **/
-        if (mode == 0) {
-            motorControllerL = hardwareMap.dcMotorController.get("MC_L");
-            motorControllerR = hardwareMap.dcMotorController.get("MC_R");
-            motorControllerA1 = hardwareMap.dcMotorController.get("MC_A1");
-            motorControllerA2 = hardwareMap.dcMotorController.get("MC_A2");
-            servoController = hardwareMap.servoController.get("SC");
-
-            motorFrontL = hardwareMap.dcMotor.get("motorFrontL");        //P0 is actually the right
-            motorFrontR = hardwareMap.dcMotor.get("motorFrontR");        //P1 is actually the left
-            motorBackL = hardwareMap.dcMotor.get("motorBackL");          //P0
-            motorBackR = hardwareMap.dcMotor.get("motorBackR");          //P1
-
-            servo = hardwareMap.servo.get("servo");
-
-            motorLauncher = hardwareMap.dcMotor.get("motorLauncher");   //P0
-            sweeperMotor = hardwareMap.dcMotor.get("motorSweeper");     //P1
-
-            motorStrafe = hardwareMap.dcMotor.get("motorStrafe");       //P0 A2
-
-            /*Setting channel modes*/
-            resetEncoders();
-            runUsingEncoders();
-
-            motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            motorStrafe.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            motorFrontL.setDirection(DcMotorSimple.Direction.REVERSE);
-            motorBackL.setDirection(DcMotorSimple.Direction.REVERSE);
-            motorLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
-        }
-        else if (mode == 1) {
-
-        }
-
-    }
-
+    /** These methods control the robot's movement **/
     public void encoderMove(double power,
                             double leftInches, double rightInches) {
         /** This method makes the motors move a certain distance **/
@@ -198,13 +159,13 @@ public class EncoderTestingAuto extends LinearOpMode {
         power = Math.abs(power);
 
         // Setting variables
-        int robotTurn = robotDegrees * tickTurnRatio;
+        double robotTurn = robotDegrees * tickTurnRatio;
 
         // Setting the target positions
-        motorFrontL.setTargetPosition(motorFrontL.getCurrentPosition() + robotTurn);
-        motorFrontR.setTargetPosition(motorFrontR.getCurrentPosition() + -robotTurn);
-        motorBackL.setTargetPosition(motorBackL.getCurrentPosition() + robotTurn);
-        motorBackR.setTargetPosition(motorBackR.getCurrentPosition() + -robotTurn);
+        motorFrontL.setTargetPosition((int)(motorFrontL.getCurrentPosition() + robotTurn));
+        motorFrontR.setTargetPosition((int)(motorFrontR.getCurrentPosition() + -robotTurn));
+        motorBackL.setTargetPosition((int)(motorBackL.getCurrentPosition() + robotTurn));
+        motorBackR.setTargetPosition((int)(motorBackR.getCurrentPosition() + -robotTurn));
 
         runToPositionEncoders();
 
@@ -255,13 +216,13 @@ public class EncoderTestingAuto extends LinearOpMode {
         power = Math.abs(power);
 
         // Setting variables
-        int robotTurn = robotDegrees * tickTurnRatio;
+        double robotTurn = robotDegrees * tickTurnRatio;
 
         // Setting the target positions
-        motorFrontL.setTargetPosition(motorFrontL.getCurrentPosition() + -robotTurn);
-        motorFrontR.setTargetPosition(motorFrontR.getCurrentPosition() + robotTurn);
-        motorBackL.setTargetPosition(motorBackL.getCurrentPosition() + -robotTurn);
-        motorBackR.setTargetPosition(motorBackR.getCurrentPosition() + robotTurn);
+        motorFrontL.setTargetPosition((int)(motorFrontL.getCurrentPosition() + -robotTurn));
+        motorFrontR.setTargetPosition((int)(motorFrontR.getCurrentPosition() + robotTurn));
+        motorBackL.setTargetPosition((int)(motorBackL.getCurrentPosition() + -robotTurn));
+        motorBackR.setTargetPosition((int)(motorBackR.getCurrentPosition() + robotTurn));
 
         runToPositionEncoders();
 
@@ -299,6 +260,61 @@ public class EncoderTestingAuto extends LinearOpMode {
         runUsingEncoders();
     }
 
+    public void stopMotion() {
+        /** Stops all drive motor motion **/
+        motorFrontL.setPower(0);
+        motorFrontR.setPower(0);
+        motorBackL.setPower(0);
+        motorBackR.setPower(0);
+    }
+    /** ----------------------------------------- **/
+
+
+
+    /** These methods control the encoder modes of the motor **/
+    public void encoderMode(int mode) {
+        /**NOTE:
+         *  This was made just for the sake of making the code look a bit neater
+         *
+         * Mode Numbers:
+         *  0 = RUN_TO_POSITION
+         *  1 = RUN_USING_ENCODER
+         *  2 = RUN_WITHOUT_ENCODER
+         *  3 = STOP_AND_RESET_ENCODERS
+         *  4 = RESET_ENCODERS
+         *  **/
+        if (mode == 0) {
+            /** Sets the encoded motors to RUN_TO_POSITION **/
+            motorFrontL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorFrontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorBackL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorBackR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else if (mode == 1) {
+            /** Sets the encoders to RUN_USING_ENCODERS **/
+            motorFrontL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBackR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else if (mode == 2) {
+            /** Sets the encoders to RUN_WITHOUT_ENCODERS **/
+            motorFrontL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorFrontR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBackL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBackR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        } else if (mode == 3) {
+            /** Stops and resets the encoder values on each of the drive motors **/
+            motorFrontL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else if (mode == 4) {
+            /** Resets the encoder values on each of the drive motors **/
+            motorFrontL.setMode(DcMotor.RunMode.RESET_ENCODERS);
+            motorFrontR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+            motorBackL.setMode(DcMotor.RunMode.RESET_ENCODERS);
+            motorBackR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        }
+    }
 
     public void resetEncoders() throws InterruptedException{
         /** Resets the encoder values on each of the drive motors **/
@@ -329,12 +345,52 @@ public class EncoderTestingAuto extends LinearOpMode {
         telemetry.addData(string1, string2);
         telemetry.update();
     }
+    /** ----------------------------------------- **/
 
-    public void stopMotion() {
-        /** Stops all drive motor motion **/
-        motorFrontL.setPower(0);
-        motorFrontR.setPower(0);
-        motorBackL.setPower(0);
-        motorBackR.setPower(0);
+
+
+    /** These methods are used to set up the robot **/
+    public void initElectronics(int mode) throws InterruptedException {
+        // To make the initialization of electronics much easier and nicer to read
+        /** Initializing and mapping electronics **/
+        if (mode == 0) {
+            /* Motors and servos (w/ controllers) */
+            motorControllerL = hardwareMap.dcMotorController.get("MC_L");
+            motorControllerR = hardwareMap.dcMotorController.get("MC_R");
+            motorControllerA1 = hardwareMap.dcMotorController.get("MC_A1");
+            motorControllerA2 = hardwareMap.dcMotorController.get("MC_A2");
+            servoController = hardwareMap.servoController.get("SC");
+
+            motorFrontL = hardwareMap.dcMotor.get("motorFrontL");        //P0 is actually the right
+            motorFrontR = hardwareMap.dcMotor.get("motorFrontR");        //P1 is actually the left
+            motorBackL = hardwareMap.dcMotor.get("motorBackL");          //P0
+            motorBackR = hardwareMap.dcMotor.get("motorBackR");          //P1
+
+            servo = hardwareMap.servo.get("servo");
+
+            motorLauncher = hardwareMap.dcMotor.get("motorLauncher");   //P0
+            sweeperMotor = hardwareMap.dcMotor.get("motorSweeper");     //P1
+
+            motorStrafe = hardwareMap.dcMotor.get("motorStrafe");       //P0 A2
+
+
+
+            /*Setting channel modes*/
+            runUsingEncoders();
+
+            motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            sweeperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            motorStrafe.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            motorFrontL.setDirection(DcMotorSimple.Direction.REVERSE);
+            motorBackL.setDirection(DcMotorSimple.Direction.REVERSE);
+            motorLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+        else if (mode == 1) {
+
+        }
+
     }
+    /** ----------------------------------------- **/
 }
