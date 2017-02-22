@@ -59,6 +59,9 @@ public class EncoderAutoLaunch extends LinearOpMode{
 
         // Initializes the electronics
         initElectronics(0);
+        motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);      // To reset encoder
+        motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         telemetry.addData("Phase 1", "Init");
         telemetry.update();
@@ -86,7 +89,13 @@ public class EncoderAutoLaunch extends LinearOpMode{
         Thread.sleep(500);
 
         launcherShot(1, 1);                     // Fires the second particle
-        
+
+
+        launcherShot(0.75, 0.25);               // Purposely messes up the motor
+        resetLauncher();                        // Resets launcher to loaded position
+
+
+
 
     }
 
@@ -149,24 +158,36 @@ public class EncoderAutoLaunch extends LinearOpMode{
 
     }
 
-    public void launcherShot(double power, int rotations) {
-        /** This method will allow the launcher to fire for a set amount of cycles (rotations) **/
+    public void launcherShot(double power, double rotations) throws InterruptedException{
+        /** This method will allow the launcher to fire for a set amount of cycles (rotations)
+         *      NOTE: rotations should be an int, but is set to a double for testing purposes **/
         // Assigning the target position of the launcher
         int launchTarget = (int)(rotations * ticksPerRevTetrix);
+        int armPosition = motorLauncher.getCurrentPosition();
+        int targetPosition = launchTarget + armPosition;
         power = Range.clip(power, 0, 1);
 
         // Setting the encoder motor positions
         motorLauncher.setTargetPosition(motorLauncher.getCurrentPosition() + launchTarget);
+
+        // Telemetry for Testing Purposes
+        telemetry.addData("Current Position", armPosition);
+        telemetry.addData("Target Position", targetPosition);
+        telemetry.addData("Translation", launchTarget);
+        telemetry.update();
+
         motorLauncher.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLauncher.setPower(power);
 
         // Code for telemetry
+
         while(motorLauncher.isBusy()) {
             // Updating variables
             double launcherPosition = motorLauncher.getCurrentPosition();
 
             // Adds telemetry data
             telemetry.addData("Launcher Position", launcherPosition);
+            telemetry.addData("Target Position", targetPosition);
             telemetry.addData("Launcher Power", power);
 
             // Updates the telemetry
@@ -178,6 +199,42 @@ public class EncoderAutoLaunch extends LinearOpMode{
 
         // Sets the encoder back to run using encoders
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void resetLauncher() {
+        // This assumes that the robot was setup in the default launching position
+        // Creates variables
+        double launcherPos = motorLauncher.getCurrentPosition();
+
+        // This is the next multiple of 1440 (multiples of 1440 being the preset loaded position
+        int nextPosition = (int)(Math.ceil(launcherPos / ticksPerRevTetrix)) * 1440;
+
+        // Creates and returns telemetry
+        telemetry.addData("Current Position", launcherPos);
+        telemetry.addData("Next Reset Position", nextPosition);
+        telemetry.update();
+
+        // Motor stuff
+        motorLauncher.setTargetPosition(nextPosition);
+        motorLauncher.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLauncher.setPower(0.75);
+
+        // Telemetry
+        while(motorLauncher.isBusy()) {
+            // Updating variables
+            double launcherPosition = motorLauncher.getCurrentPosition();
+
+            // Adds telemetry data
+            telemetry.addData("Launcher Position", launcherPosition);
+            telemetry.addData("Next Reset Position", nextPosition);
+
+            // Updates the telemetry
+            telemetry.update();
+        }
+
+        // Stops the launcher
+        motorLauncher.setPower(0);
+
     }
 
     public void rotateDegreesLeft(double power, int robotDegrees) {
@@ -301,6 +358,8 @@ public class EncoderAutoLaunch extends LinearOpMode{
         motorBackL.setPower(0);
         motorBackR.setPower(0);
     }
+
+
     /** ----------------------------------------- **/
 
 
