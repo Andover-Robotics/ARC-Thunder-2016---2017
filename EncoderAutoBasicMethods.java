@@ -57,7 +57,7 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
 
     /** For Encoders and specific turn values **/
     double ticksPerRev = 1120;             // This is the specific value for AndyMark motors
-    double ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
+    double ticksPer360Turn = 4500;         // The amount of ticks for a 360 degree turn
     double tickTurnRatio = ticksPer360Turn / 360;
     double inchToMm = 25.4;             // For conversion between the vectors
 
@@ -73,23 +73,24 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
 
 
     public void runOpMode() throws  InterruptedException{
-         /** This is the method that executes the code and what the robot should do **/
+        /** This is the method that executes the code and what the robot should do **/
         // Call any variables not stated before
 
         // Initializes the electronics
-         initElectronics(0);
+        initElectronics(0);
 
-         telemetry.addData("Phase 1", "Init");
-         telemetry.update();
+        telemetry.addData("Phase 1", "Init");
+        telemetry.update();
 
-         waitForStart();
+        waitForStart();
 
-         telemetry.addData("Started Robot", "Now");
-         telemetry.update();
+        telemetry.addData("Started Robot", "Now");
+        telemetry.update();
 
-         runToPositionEncoders();
+        runToPositionEncoders();
 
-         /* Your code beneath this */
+        /* Your code beneath this */
+
 
 
     }
@@ -99,14 +100,38 @@ public class EncoderAutoBasicMethods extends LinearOpMode {
     public void encoderMove(double power,
                             double leftInches, double rightInches) {
         /** This method makes the motors move a certain distance **/
+        // Creating variables
+        int leftTarget;
+        int rightTarget;
 
-        // Sets the power range
-        power = Range.clip(power, -1, 1);
-        power = Math.abs(power);
+        // This allows for the use of negative power
+        if (power > 0 && power <= 1) {
 
-        // Assigning variables
-        int leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
-        int rightTarget = (int)(rightInches * -ticksPerInch);
+            // Assigning variables
+            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = (int)(rightInches * -ticksPerInch);
+
+        } else if (power < 0 && power >= -1) {
+
+            // Assigning variables
+            leftTarget = -1 * (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = -1 * (int)(rightInches * -ticksPerInch);
+
+        } else if (power == 0) {
+
+            leftTarget = 0;
+            rightTarget = 0;
+
+        } else {
+            // Sets the power range
+            power = Range.clip(power, -1, 1);
+            power = Math.abs(power);
+
+            // Assigning variables
+            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = (int)(rightInches * -ticksPerInch);
+
+        }
 
 
         // Setting the target positions

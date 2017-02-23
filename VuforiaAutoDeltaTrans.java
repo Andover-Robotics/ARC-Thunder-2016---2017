@@ -26,17 +26,17 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
     private DcMotorController motorControllerL, motorControllerR, motorControllerA1, motorControllerA2;
     private DcMotor motorFrontL, motorFrontR, motorBackL, motorBackR;
 
-    int ticksPerRev = 1120;             // This is the specific value for AndyMark motors
-    double ticksPer360Turn = 4500;         // The amount of ticks for a 360 degree turn
+    int ticksPerRev = 1120;                 // This is the specific value for AndyMark motors
+    double ticksPer360Turn = 4500;          // The amount of ticks for a 360 degree turn
     double tickTurnRatio = ticksPer360Turn / 360;
 
-    double wheelDiameter = 101.6;         // Diameter of the current omniwheels in millimeters; 4 inches
-    double phoneDisplacement = 210; //10 = 1cm; 1 = 1mm; from the center to the front (along the z axis when the robot is facing the target)
+    double wheelDiameter = 101.6;           // Diameter of the current omniwheels in millimeters; 4 inches
+    double phoneDisplacement = 210;         //10 = 1cm; 1 = 1mm; from the center to the front (along the z axis when the robot is facing the target)
     double wheelCircumference =  wheelDiameter * Math.PI; //1 = 1mm
 
     double ticksPerInch = (ticksPerRev / (wheelCircumference));
 
-    double inchToMm = 25.4;             // For conversion between the vectors
+    double inchToMm = 25.4;                 // For conversion between the vectors
 
     double degreesToTurn;
     double degreesToParallel;
@@ -216,17 +216,43 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
         motorBackL.setTargetPosition(position);
         motorBackR.setTargetPosition(position);
     }
+
     public void encoderMove(double power,
                             double leftInches, double rightInches) {
         /** This method makes the motors move a certain distance **/
+        // Creating variables
+        int leftTarget;
+        int rightTarget;
 
-        // Sets the power range
-        power = Range.clip(power, -1, 1);
-        power = Math.abs(power);
+        // This allows for the use of negative power
+        if (power > 0 && power <= 1) {
 
-        // Assigning variables
-        int leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
-        int rightTarget = (int)(rightInches * -ticksPerInch);
+            // Assigning variables
+            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = (int)(rightInches * -ticksPerInch);
+
+        } else if (power < 0 && power >= -1) {
+
+            // Assigning variables
+            leftTarget = -1 * (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = -1 * (int)(rightInches * -ticksPerInch);
+
+        } else if (power == 0) {
+
+            leftTarget = 0;
+            rightTarget = 0;
+
+        } else {
+            // Sets the power range
+            power = Range.clip(power, -1, 1);
+            power = Math.abs(power);
+
+            // Assigning variables
+            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = (int)(rightInches * -ticksPerInch);
+
+        }
+
 
 
         // Setting the target positions
@@ -271,6 +297,7 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
         runUsingEncoders();
 
     }
+
 
     public void rotateDegreesLeft(double power, double robotDegrees) {
         /** Robot requires values of...

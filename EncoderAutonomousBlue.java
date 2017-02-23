@@ -49,7 +49,7 @@ public class EncoderAutonomousBlue extends LinearOpMode {
 
     /** For Encoders and specific turn values **/
     double ticksPerRev = 1120;             // This is the specific value for AndyMark motors
-    double ticksPer360Turn = 4900;         // The amount of ticks for a 360 degree turn
+    double ticksPer360Turn = 4500;         // The amount of ticks for a 360 degree turn
     double tickTurnRatio = ticksPer360Turn / 360;
     double inchToMm = 25.4;             // For conversion between the vectors
 
@@ -84,14 +84,14 @@ public class EncoderAutonomousBlue extends LinearOpMode {
         /* Your code beneath this */
         colorBeacon.enableLed(LEDState);
 
-
         Color.RGBToHSV(colorBeacon.red() * 8, colorBeacon.green() * 8, colorBeacon.blue() * 8, hsvValues);
 
-        telemetry.addData("2 Clear", colorBeacon.alpha());
-        telemetry.addData("4 Green", colorBeacon.green());
-        telemetry.addData("3 Red", colorBeacon.red());
-        telemetry.addData("6 Hue", hsvValues[0]);
-        telemetry.addData("5 Blue", colorBeacon.blue());
+        telemetry.addData("Clear", colorBeacon.alpha());
+        telemetry.addData("Red", colorBeacon.red());
+        telemetry.addData("Green", colorBeacon.green());
+        telemetry.addData("Blue", colorBeacon.blue());
+        telemetry.addData("Hue", hsvValues[0]);
+        telemetry.update();
 
         // Robot is on blue team
         if(colorBeacon.red() > colorBeacon.blue() && colorBeacon.red() > colorBeacon.green()) {
@@ -114,13 +114,38 @@ public class EncoderAutonomousBlue extends LinearOpMode {
                             double leftInches, double rightInches) {
         /** This method makes the motors move a certain distance **/
 
-        // Sets the power range
-        power = Range.clip(power, -1, 1);
-        power = Math.abs(power);
+        // Creating variables
+        int leftTarget;
+        int rightTarget;
 
-        // Assigning variables
-        int leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
-        int rightTarget = (int)(rightInches * -ticksPerInch);
+        // This allows for the use of negative power
+        if (power > 0 && power <= 1) {
+
+            // Assigning variables
+            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = (int)(rightInches * -ticksPerInch);
+
+        } else if (power < 0 && power >= -1) {
+
+            // Assigning variables
+            leftTarget = -1 * (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = -1 * (int)(rightInches * -ticksPerInch);
+
+        } else if (power == 0) {
+
+            leftTarget = 0;
+            rightTarget = 0;
+
+        } else {
+            // Sets the power range
+            power = Range.clip(power, -1, 1);
+            power = Math.abs(power);
+
+            // Assigning variables
+            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+            rightTarget = (int)(rightInches * -ticksPerInch);
+
+        }
 
 
         // Setting the target positions
