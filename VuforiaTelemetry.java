@@ -52,12 +52,14 @@ public class VuforiaTelemetry extends LinearOpMode{
 
                     //atan2 rounds the arc tangent (y/x) to the closets double
                     //multiply the translation of the z axis by -1 if the phone is in the front of the autonomous, leave it with no multiplication if the phone is in the back
-                    double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2))) - 180; //if phone is vertical to represent the x axis and z axis respectively. landscape mode if in screen rotation lock will want 0 instead of 1 for the first translation or x; vertical mode will be the 1 instead of 0
-
+                    double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), -1* translation.get(2))); //if phone is vertical to represent the x axis and z axis respectively. landscape mode if in screen rotation lock will want 0 instead of 1 for the first translation or x; vertical mode will be the 1 instead of 0
+                    double degreesToParallel = 90-Math.abs(degreesToTurn);
+                    
                     telemetry.addData(beac.getName() + "-Degrees", degreesToTurn);
+                    telemetry.addData(beac.getName() + "-Degrees to Parallel", degreesToParallel);
                     telemetry.addData("X Coord", translation.get(1));
                     telemetry.addData("Y Coord", -1*translation.get(0));
-                    telemetry.addData("Z Coord", translation.get(2));
+                    telemetry.addData("Z Coord", -1 * translation.get(2));
                 }
             }
             telemetry.update();
