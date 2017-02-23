@@ -90,9 +90,8 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
         degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), -1 * translation.get(2)));
         degreesToParallel = 90-Math.abs(degreesToTurn);
 
-        double xcoord = translation.get(1);
-        double zcoord = translation.get(2) * -1;
-
+        //I know that using degreesToTurn instead doing all this would be easier, but we had such good results doing it this way
+        //I'm just gonna leave it this way for now until everything else is working because refinement comes after functionality
         stopAndResetEncoders();
         rotateDegreesLeft(0.1, degreesToParallel);
 
@@ -100,25 +99,35 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
         addTelemetryData("Parallel", "Yes");
 
         stopAndResetEncoders();
-        encoderMove(-0.1, xcoord / inchToMm, xcoord / inchToMm );
-
-        stopMotion();
-        addTelemetryData("X coord is 0", "Yes");
-
-        stopAndResetEncoders();
-        encoderMove(-0.1, phoneDisplacement / inchToMm, phoneDisplacement / inchToMm );
-
-        stopMotion();
-        addTelemetryData("X coord is 0", "Yes");
-
-        stopAndResetEncoders();
         rotateDegreesRight(0.1, 90);
 
         stopMotion();
         addTelemetryData("Facing beacon", "Yes");
 
+        //had to rotate first to parallel to beacon in order to get accurate results
+        double xcoord = translation.get(1);
+        double zcoord = translation.get(2) * -1;
+
         stopAndResetEncoders();
-        encoderMove(-0.1, (zcoord - 50)/ inchToMm, (zcoord - 50)/ inchToMm);
+        rotateDegreesLeft(0.1, 90);
+
+        stopMotion();
+        addTelemetryData("Facing beacon", "No");
+
+        stopAndResetEncoders();
+        encoderMove(0.1, -1 * xcoord / inchToMm, -1 * xcoord / inchToMm );
+
+        stopMotion();
+        addTelemetryData("X coord is 0", "Yes");
+
+        stopAndResetEncoders();
+        encoderMove(0.1, -1 * phoneDisplacement / inchToMm, -1 * phoneDisplacement / inchToMm );
+
+        stopMotion();
+        addTelemetryData("X coord is 0", "Yes");
+
+        stopAndResetEncoders();
+        encoderMove(0.1, -1 * (zcoord - 50)/ inchToMm, -1 * (zcoord - 50)/ inchToMm);
 
         stopMotion();
         addTelemetryData("Aligned", "Yes");
