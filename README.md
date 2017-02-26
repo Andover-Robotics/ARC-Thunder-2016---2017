@@ -23,6 +23,7 @@ Remember, only one person edits or changes code at one time. Also, update code o
   
 ### Wireless Debugging in Android Studio using ADB
 [Video Resource] (https://www.youtube.com/watch?v=YtZ55JabfPc)
+
 [pg 44-47, Getting Started with Android Studio] (http://ftc.flfirst.org/images/Home_Files/Documents/2016/2016_SDK_Changes.pdf)
 
 
