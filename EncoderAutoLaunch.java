@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import com.qualcomm.robotcore.util.ThreadPool;
  * Created by Alex on 2/20/2017.
  */
 
-@Autonomous(name="Encoder Launching Arm Test", group="Encoder Auto")
+@TeleOp(name="Encoder Launching Arm Test", group="Testing")
 public class EncoderAutoLaunch extends LinearOpMode{
 
     /** Declaring the motor variables **/
@@ -46,6 +47,8 @@ public class EncoderAutoLaunch extends LinearOpMode{
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
     double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
 
+    double encoderResetSpeed = 0.25;        // Motor speed for when the robot resets launcher
+
 
     /** Color Sensor Stuffs **/
     ColorSensor colorBeacon;
@@ -64,6 +67,8 @@ public class EncoderAutoLaunch extends LinearOpMode{
 
 
         telemetry.addData("Phase 1", "Init");
+        telemetry.addData("Fire 1 Particle and Reload", "Gamepad1.X");
+        telemetry.addData("Reset Launcher Arm", "Gamepad1.Y");
         telemetry.update();
 
         waitForStart();
@@ -79,23 +84,24 @@ public class EncoderAutoLaunch extends LinearOpMode{
          *  - One or two particles are loaded, but one is preloaded in the launcher arm **/
         motorLauncher.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        launcherShot(1, 1);                     // Fires a shot
-        Thread.sleep(500);                      // waits a little
 
-        servo.setPosition(1);                   // Lift the particle queue gate up
-        Thread.sleep(1500);                     // Wait for particle to load into the launcher
+        while (opModeIsActive()) {
+            if (gamepad1.x == true) {
+                launcherShot(0.5, 1);                   // Fires a shot
+                Thread.sleep(500);                      // waits a little
 
-        servo.setPosition(0.6);                 // Close the gate
-        Thread.sleep(500);
+                servo.setPosition(1);                   // Lift the particle queue gate up
+                Thread.sleep(1500);                     // Wait for particle to load into the launcher
 
-        launcherShot(1, 1);                     // Fires the second particle
+                servo.setPosition(0.6);                 // Close the gate
+                resetLauncher();
+                Thread.sleep(500);
 
-
-        launcherShot(0.75, 0.25);               // Purposely messes up the motor
-        resetLauncher();                        // Resets launcher to loaded position
-
-
-
+            }
+            else if (gamepad1.y == true) {
+                resetLauncher();
+            }
+        }
 
     }
 
@@ -217,7 +223,7 @@ public class EncoderAutoLaunch extends LinearOpMode{
         // Motor stuff
         motorLauncher.setTargetPosition(nextPosition);
         motorLauncher.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLauncher.setPower(0.75);
+        motorLauncher.setPower(0.25);
 
         // Telemetry
         while(motorLauncher.isBusy()) {
