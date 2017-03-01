@@ -45,7 +45,7 @@ public class EncoderAutoLaunch extends LinearOpMode{
     double inchToMm = 25.4;                // For conversion between the vectors
 
     double wheelDiameter = 4.0;         // Diameter of the current omniwheels in inches
-    double ticksPerInch = (ticksPerRev / (wheelDiameter * 3.14159265));
+    double ticksPerInch = (ticksPerRev / (wheelDiameter * Math.PI));
 
     double encoderResetSpeed = 0.25;        // Motor speed for when the robot resets launcher
 
