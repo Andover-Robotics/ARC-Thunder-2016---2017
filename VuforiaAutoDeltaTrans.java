@@ -21,22 +21,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
  * Created by citruseel on 2/22/2017.
  */
 //When the phone is in landscape without potrait lock: x = [1], y = -1*[0], z = -1 * [2]
-@Autonomous(name="AutoDeltaTrans", group="Vuforia")
+@Autonomous(name="Vuforia Combined With Encoder To Calculate The Difference In Translation Autonomous So That We Align Perfectly In Front Of The Beacon", group="Vuforia")
 public class VuforiaAutoDeltaTrans extends LinearOpMode {
     private DcMotorController motorControllerL, motorControllerR, motorControllerA1, motorControllerA2;
     private DcMotor motorFrontL, motorFrontR, motorBackL, motorBackR;
 
-    int ticksPerRev = 1120;                 // This is the specific value for AndyMark motors
-    double ticksPer360Turn = 4500;          // The amount of ticks for a 360 degree turn
+    int ticksPerRev = 1120;             // This is the specific value for AndyMark motors
+    double ticksPer360Turn = 4500;         // The amount of ticks for a 360 degree turn
     double tickTurnRatio = ticksPer360Turn / 360;
 
-    double wheelDiameter = 101.6;           // Diameter of the current omniwheels in millimeters; 4 inches
-    double phoneDisplacement = 210;         //10 = 1cm; 1 = 1mm; from the center to the front (along the z axis when the robot is facing the target)
+    double wheelDiameter = 101.6;         // Diameter of the current omniwheels in millimeters; 4 inches
+    double phoneDisplacement = 210; //10 = 1cm; 1 = 1mm; from the center to the front (along the z axis when the robot is facing the target)
     double wheelCircumference =  wheelDiameter * Math.PI; //1 = 1mm
 
     double ticksPerInch = (ticksPerRev / (wheelCircumference));
 
-    double inchToMm = 25.4;                 // For conversion between the vectors
+    double inchToMm = 25.4;             // For conversion between the vectors
 
     double degreesToTurn;
     double degreesToParallel;
@@ -90,10 +90,16 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
         degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), -1 * translation.get(2)));
         degreesToParallel = 90-Math.abs(degreesToTurn);
 
-        //I know that using degreesToTurn instead doing all this would be easier, but we had such good results doing it this way
-        //I'm just gonna leave it this way for now until everything else is working because refinement comes after functionality
+        while (opModeIsActive() && pose != null ){
+            pose = wheels.getPose();
+            motorFrontR.setPower(-0.2);
+            motorFrontL.setPower(0.2);
+            motorBackR.setPower(-0.2);
+            motorBackL.setPower(0.2);
+        }
+
         stopAndResetEncoders();
-        rotateDegreesLeft(0.1, degreesToParallel);
+        rotateDegreesLeft(0.1, 10);
 
         stopMotion();
         addTelemetryData("Parallel", "Yes");
@@ -225,43 +231,17 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
         motorBackL.setTargetPosition(position);
         motorBackR.setTargetPosition(position);
     }
-
     public void encoderMove(double power,
                             double leftInches, double rightInches) {
         /** This method makes the motors move a certain distance **/
-        // Creating variables
-        int leftTarget;
-        int rightTarget;
 
-        // This allows for the use of negative power
-        if (power > 0 && power <= 1) {
+        // Sets the power range
+        power = Range.clip(power, -1, 1);
+        power = Math.abs(power);
 
-            // Assigning variables
-            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
-            rightTarget = (int)(rightInches * -ticksPerInch);
-
-        } else if (power < 0 && power >= -1) {
-
-            // Assigning variables
-            leftTarget = -1 * (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
-            rightTarget = -1 * (int)(rightInches * -ticksPerInch);
-
-        } else if (power == 0) {
-
-            leftTarget = 0;
-            rightTarget = 0;
-
-        } else {
-            // Sets the power range
-            power = Range.clip(power, -1, 1);
-            power = Math.abs(power);
-
-            // Assigning variables
-            leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
-            rightTarget = (int)(rightInches * -ticksPerInch);
-
-        }
-
+        // Assigning variables
+        int leftTarget = (int)(leftInches * -ticksPerInch);     // Value must be negative to go forward
+        int rightTarget = (int)(rightInches * -ticksPerInch);
 
 
         // Setting the target positions
@@ -307,11 +287,10 @@ public class VuforiaAutoDeltaTrans extends LinearOpMode {
 
     }
 
-
     public void rotateDegreesLeft(double power, double robotDegrees) {
         /** Robot requires values of...
-         *  360 degrees =~ 4600 ticks
-         *  180 degrees =~ 2300 ticks  **/
+         *  360 degrees =~ 4500 ticks
+         *  180 degrees =~ 2250 ticks  **/
 
         /** This method, given an input amount of degrees, makes the robot turn
          *  the amount of degrees specified around ITS center of rotation **/
