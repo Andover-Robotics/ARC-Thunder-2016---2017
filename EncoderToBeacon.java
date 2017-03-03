@@ -17,8 +17,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
 
-@Autonomous(name="Blue: Using exact measurements, we will use encoders to control the distance traveled by our robot in order to reach the becons and align to it perfectly", group="Encoders")
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+@Autonomous(name="Blue: Put the robot along the wall while having it target the middle of the white line or the corner of the same square it is in", group="Encoders")
 public class EncoderToBeacon extends LinearOpMode {
 
 
@@ -69,51 +78,60 @@ public class EncoderToBeacon extends LinearOpMode {
 
         colorSensor.enableLed(false);
 
+
         telemetry.addData("Started Robot", "Now");
         telemetry.update();
 
         runToPositionEncoders();
-
-        encoderMove(0.2, -50, -50);
         telemetry.addData("Move Forward", "50 inches backwards");
         telemetry.update();
+        encoderMove(0.4, -24.5, -24.5);
+
+        launch(1, 300);
+        motorLauncher.setPower(0);
 
         runToPositionEncoders();
-
-        rotateDegreesRight(0.2, 45);
         telemetry.addData("Move Forward", "50 inches backwards");
         telemetry.update();
+        encoderMove(0.4, -24.5, -24.5);
+
 
         runToPositionEncoders();
-
-        encoderMove(0.2, -12, -12);
-        telemetry.addData("Move Forward", "50 inches backwards");
+        telemetry.addData("Reached Corner", "Yes");
         telemetry.update();
+        rotateDegreesLeft(0.4, 45);
+
 
         runToPositionEncoders();
-
-        rotateDegreesRight(0.2, 90);
-        telemetry.addData("Move Forward", "50 inches backwards");
+        telemetry.addData("Parallel", "Yes");
         telemetry.update();
+        encoderMove(0.4, -11, -11);
+
 
         runToPositionEncoders();
-
-        encoderMove(0.2, -20, -20);
-        telemetry.addData("Move Forward", "50 inches backwards");
+        telemetry.addData("Centered", "Yes");
         telemetry.update();
+        rotateDegreesRight(0.4, 90);
 
-        while (colorSensor.red() == 0 && colorSensor.blue() == 0){
-            motorFrontR.setPower(1);
-            motorFrontL.setPower(1);
-            motorBackL.setPower(1);
-            motorBackR.setPower(1);
-        }
+
+
+        runToPositionEncoders();
+        telemetry.addData("Aligned", "Yes");
+        telemetry.update();
+        encoderMove(0.4, -15, -15);
+
 
         if (colorSensor.red() > colorSensor.blue()){
-            rotateDegreesLeft(0.1, 30);
+            telemetry.addData("Color Sensed", "Red");
+            telemetry.update();
+
+            rotateDegreesLeft(0.1, 25);
         }
         else {
-            rotateDegreesRight(0.1, 30);
+            telemetry.addData("Color Sensed", "Blue");
+            telemetry.update();
+
+            rotateDegreesRight(0.1, 25);
         }
 
 
@@ -162,6 +180,11 @@ public class EncoderToBeacon extends LinearOpMode {
 
         }
 
+    }
+
+    public void launch(double power, long milliseconds) throws InterruptedException{
+        motorLauncher.setPower(power);
+        Thread.sleep(milliseconds);
     }
 
     public void encoderMove(double power,
